@@ -63,8 +63,7 @@ automatically. Each entry has `quote`, `name`, `note`, `source`
 3. **Testimonials are SAMPLES** — the entries in `testimonials.js` are marked
    `sample: true`. Replace with real client reviews (with written permission)
    before launch.
-4. **Social & review links** — Instagram is live
-   (`https://www.instagram.com/thel.itpath`). Facebook, LinkedIn, YouTube,
+4. **Social & review links** — Instagram and Facebook are live. LinkedIn, YouTube,
    Google, and Yelp icons point at `#` (marked `TODO` in `index.html`) — insert
    the real profile URLs, the Google Business Profile review link, and the Yelp
    business page when provided.
