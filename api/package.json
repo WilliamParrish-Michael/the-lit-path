@@ -1,0 +1,19 @@
+{
+  "name": "the-lit-path-api",
+  "version": "1.0.0",
+  "description": "Testimonials + blog API for The Lit Path (thelitpath site)",
+  "main": "server.js",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.12.0"
+  }
+}

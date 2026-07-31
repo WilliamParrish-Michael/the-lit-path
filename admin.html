@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin — The Lit Path</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Alegreya+Sans:wght@400;500;700&family=Spline+Sans+Mono:wght@500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<script src="site-config.js"></script>
+<style>
+  .admin-wrap { max-width: 900px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+  .admin-card {
+    background: rgba(20, 26, 56, 0.35); border: 1px solid rgba(246, 239, 227, 0.16);
+    border-radius: 16px; padding: 1.6rem; margin-top: 1.4rem;
+  }
+  .admin-h { font-family: var(--display); font-weight: 500; font-size: 1.8rem; margin-bottom: 0.4rem; }
+  .admin-sub { color: var(--cream-dim); margin-bottom: 1rem; }
+  .admin-field { display: block; font-weight: 700; font-size: 0.95rem; margin-bottom: 1rem; }
+  .admin-field input, .admin-field textarea, .admin-field select {
+    display: block; width: 100%; margin-top: 0.4rem; font-family: var(--body);
+    font-size: 1rem; color: var(--cream); background: rgba(20, 26, 56, 0.6);
+    border: 1px solid rgba(246, 239, 227, 0.25); border-radius: 10px; padding: 0.65rem 0.9rem;
+  }
+  .admin-field textarea { font-family: var(--trail); font-size: 0.92rem; line-height: 1.6; }
+  .tabs { display: flex; gap: 0.6rem; margin-top: 1.6rem; flex-wrap: wrap; }
+  .status-msg { margin-top: 0.8rem; font-size: 0.95rem; min-height: 1.4em; }
+  .status-msg.ok { color: #8FD694; }
+  .status-msg.err { color: #FF9B7B; }
+  .row-card {
+    border: 1px solid rgba(246, 239, 227, 0.16); border-radius: 12px;
+    padding: 1rem 1.1rem; margin-top: 0.9rem; background: rgba(20, 26, 56, 0.3);
+  }
+  .row-head { display: flex; justify-content: space-between; gap: 0.8rem; align-items: baseline; flex-wrap: wrap; }
+  .row-title { font-weight: 700; }
+  .pill {
+    font-family: var(--trail); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 0.2rem 0.7rem; border-radius: 999px; border: 1px solid rgba(246, 239, 227, 0.3);
+  }
+  .pill.pending { color: var(--lamplight); border-color: var(--lamplight); }
+  .pill.approved { color: #8FD694; border-color: #8FD694; }
+  .pill.hidden, .pill.draft { color: var(--cream-dim); }
+  .pill.published { color: #8FD694; border-color: #8FD694; }
+  .row-quote { font-family: var(--display); font-style: italic; margin: 0.5rem 0; color: var(--cream-dim); }
+  .row-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.6rem; }
+  .mini {
+    font-family: var(--body); font-weight: 700; font-size: 0.85rem; cursor: pointer;
+    border-radius: 999px; padding: 0.4rem 1rem; border: 1px solid rgba(246, 239, 227, 0.35);
+    background: transparent; color: var(--cream);
+  }
+  .mini:hover { border-color: var(--lamplight); color: var(--lamplight); }
+  .mini.primary { background: var(--lamplight); color: var(--night); border-color: var(--lamplight); }
+  .mini.danger:hover { border-color: #FF9B7B; color: #FF9B7B; }
+  .muted { color: var(--cream-dim); font-size: 0.85rem; }
+  .hiddenview { display: none !important; }
+  .check { display: flex; gap: 0.5rem; align-items: center; font-weight: 700; margin-bottom: 1rem; }
+  .check input { width: auto; }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="wrap">
+      <a href="index.html" class="brand" aria-label="The Lit Path home">
+        <svg class="brand-flame" viewBox="0 0 32 32" aria-hidden="true">
+          <defs>
+            <linearGradient id="lpg" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0" stop-color="#E2703A"/><stop offset="1" stop-color="#FFB44D"/>
+            </linearGradient>
+          </defs>
+          <path d="M7 29.5 C 17 27.5, 23.5 24.5, 16.5 21.5 C 10 18.7, 12 16.8, 16 15.6" fill="none" stroke="url(#lpg)" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="0.1 4.6"/>
+          <path d="M16 1.5c1.9 3.2 5.4 5.2 5.4 9.4a5.4 5.4 0 1 1-10.8 0c0-2.3 1.1-3.9 2.4-5.5.4 1.2 1 2 1.9 2.7-.5-2.2-.3-4.1 1.1-6.6z" fill="url(#lpg)"/>
+        </svg>
+        <span class="brand-text">The <em>Lit</em> Path</span>
+      </a>
+      <nav class="navlinks" aria-label="Primary">
+        <a href="index.html">View site</a>
+        <a href="#" id="logout" class="hiddenview">Sign out</a>
+      </nav>
+    </div>
+  </div>
+
+  <main class="admin-wrap">
+
+    <!-- ============ LOGIN ============ -->
+    <section id="view-login">
+      <h1 class="admin-h">Admin sign-in</h1>
+      <p class="admin-sub">One approved account. The password is set on the API server (ADMIN_PASSWORD).</p>
+      <div class="admin-card" style="max-width: 420px;">
+        <form id="login-form">
+          <label class="admin-field">Password
+            <input type="password" id="login-pass" autocomplete="current-password" required />
+          </label>
+          <button type="submit" class="btn btn-primary">Sign in</button>
+          <p class="status-msg" id="login-msg"></p>
+          <p class="muted">First request after idle can take ~30–50 seconds while the free server wakes up.</p>
+        </form>
+      </div>
+    </section>
+
+    <!-- ============ DASHBOARD ============ -->
+    <section id="view-dash" class="hiddenview">
+      <h1 class="admin-h">The Lit Path — admin</h1>
+      <p class="admin-sub">Approve testimonials and publish field notes. Changes are live on the site immediately.</p>
+      <div class="tabs">
+        <button type="button" class="tchip active" id="tab-reviews">Testimonials</button>
+        <button type="button" class="tchip" id="tab-posts">Blog posts</button>
+      </div>
+
+      <!-- Testimonials -->
+      <div id="panel-reviews">
+        <div class="admin-card">
+          <p class="row-title">Add a testimonial manually</p>
+          <p class="muted" style="margin-bottom:0.8rem;">For reviews that arrive by email, Google, or Yelp — paste them here (with the client's permission), pick the source, and approve.</p>
+          <form id="review-form">
+            <label class="admin-field">Quote
+              <textarea id="rf-quote" rows="3" required></textarea>
+            </label>
+            <label class="admin-field">Name (e.g. "Danielle M.")
+              <input type="text" id="rf-name" required />
+            </label>
+            <label class="admin-field">Context line (optional, e.g. "Career change · 6 months")
+              <input type="text" id="rf-note" />
+            </label>
+            <label class="admin-field">Source
+              <select id="rf-source">
+                <option value="direct">Client note</option>
+                <option value="google">Google</option>
+                <option value="yelp">Yelp</option>
+                <option value="instagram">Instagram</option>
+                <option value="facebook">Facebook</option>
+              </select>
+            </label>
+            <button type="submit" class="btn btn-primary">Add as approved</button>
+            <p class="status-msg" id="review-msg"></p>
+          </form>
+        </div>
+        <div id="review-list"><p class="muted" style="margin-top:1rem;">Loading testimonials…</p></div>
+      </div>
+
+      <!-- Posts -->
+      <div id="panel-posts" class="hiddenview">
+        <div class="admin-card">
+          <p class="row-title" id="post-form-title">Write a field note</p>
+          <form id="post-form">
+            <input type="hidden" id="pf-id" />
+            <label class="admin-field">Title
+              <input type="text" id="pf-title" required />
+            </label>
+            <label class="admin-field">Slug (URL name — leave blank to auto-generate from title)
+              <input type="text" id="pf-slug" placeholder="my-post-title" />
+            </label>
+            <label class="admin-field">Description (1–2 sentences for cards + search engines)
+              <input type="text" id="pf-desc" />
+            </label>
+            <label class="admin-field">Body — markdown: ## Heading, **bold**, *italic*, - lists, &gt; quote
+              <textarea id="pf-body" rows="14" required></textarea>
+            </label>
+            <label class="check"><input type="checkbox" id="pf-pub" /> Published (visible on the site)</label>
+            <div class="row-actions">
+              <button type="submit" class="btn btn-primary" id="pf-save">Save post</button>
+              <button type="button" class="mini" id="pf-new">Start a new post</button>
+            </div>
+            <p class="status-msg" id="post-msg"></p>
+          </form>
+        </div>
+        <div id="post-list"><p class="muted" style="margin-top:1rem;">Loading posts…</p></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      var token = sessionStorage.getItem('litpath_token') || '';
+      var viewLogin = document.getElementById('view-login');
+      var viewDash = document.getElementById('view-dash');
+      var logout = document.getElementById('logout');
+
+      function api(path, method, body) {
+        return fetch(LITPATH_API + path, {
+          method: method || 'GET',
+          headers: Object.assign(
+            { 'Content-Type': 'application/json' },
+            token ? { 'Authorization': 'Bearer ' + token } : {}
+          ),
+          body: body ? JSON.stringify(body) : undefined
+        }).then(function (r) {
+          return r.json().then(function (j) {
+            if (j.error) { if (r.status === 401) signOut(); throw new Error(j.error.message); }
+            return j.data;
+          });
+        });
+      }
+
+      function show(el) { el.classList.remove('hiddenview'); }
+      function hide(el) { el.classList.add('hiddenview'); }
+      function msg(id, text, ok) {
+        var el = document.getElementById(id);
+        el.textContent = text; el.className = 'status-msg ' + (ok ? 'ok' : 'err');
+      }
+
+      function signOut() {
+        token = ''; sessionStorage.removeItem('litpath_token');
+        hide(viewDash); hide(logout); show(viewLogin);
+      }
+      logout.addEventListener('click', function (e) { e.preventDefault(); signOut(); });
+
+      function enterDash() {
+        hide(viewLogin); show(viewDash); show(logout);
+        loadReviews(); loadPosts();
+      }
+
+      document.getElementById('login-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        msg('login-msg', 'Signing in… (the server may need ~30s to wake)', true);
+        api('/api/admin/login', 'POST', { password: document.getElementById('login-pass').value })
+          .then(function (d) {
+            token = d.token; sessionStorage.setItem('litpath_token', token);
+            enterDash();
+          })
+          .catch(function (err) { msg('login-msg', err.message, false); });
+      });
+
+      /* ---------- tabs ---------- */
+      var tabR = document.getElementById('tab-reviews'), tabP = document.getElementById('tab-posts');
+      tabR.addEventListener('click', function () {
+        tabR.classList.add('active'); tabP.classList.remove('active');
+        show(document.getElementById('panel-reviews')); hide(document.getElementById('panel-posts'));
+      });
+      tabP.addEventListener('click', function () {
+        tabP.classList.add('active'); tabR.classList.remove('active');
+        show(document.getElementById('panel-posts')); hide(document.getElementById('panel-reviews'));
+      });
+
+      /* ---------- testimonials ---------- */
+      function loadReviews() {
+        api('/api/admin/testimonials').then(function (rows) {
+          var box = document.getElementById('review-list');
+          box.innerHTML = '';
+          if (!rows.length) { box.innerHTML = '<p class="muted" style="margin-top:1rem;">No testimonials yet. Submissions from the site land here as “pending”.</p>'; return; }
+          rows.forEach(function (t) {
+            var card = document.createElement('div'); card.className = 'row-card';
+            var head = document.createElement('div'); head.className = 'row-head';
+            var title = document.createElement('span'); title.className = 'row-title';
+            title.textContent = t.name + (t.note ? ' — ' + t.note : '');
+            var pill = document.createElement('span'); pill.className = 'pill ' + t.status; pill.textContent = t.status + ' · ' + t.source;
+            head.appendChild(title); head.appendChild(pill);
+            var quote = document.createElement('p'); quote.className = 'row-quote'; quote.textContent = '“' + t.quote + '”';
+            var actions = document.createElement('div'); actions.className = 'row-actions';
+            function actionBtn(label, cls, fn) {
+              var b = document.createElement('button'); b.type = 'button'; b.className = 'mini ' + (cls || ''); b.textContent = label;
+              b.addEventListener('click', fn); actions.appendChild(b);
+            }
+            if (t.status !== 'approved') actionBtn('Approve', 'primary', function () { setStatus(t.id, 'approved'); });
+            if (t.status !== 'hidden') actionBtn('Hide', '', function () { setStatus(t.id, 'hidden'); });
+            actionBtn('Delete', 'danger', function () {
+              if (confirm('Permanently delete this testimonial?')) {
+                api('/api/admin/testimonials/' + t.id, 'DELETE').then(loadReviews).catch(function (e) { alert(e.message); });
+              }
+            });
+            card.appendChild(head); card.appendChild(quote); card.appendChild(actions);
+            box.appendChild(card);
+          });
+        }).catch(function (e) {
+          document.getElementById('review-list').innerHTML = '<p class="status-msg err">' + e.message + '</p>';
+        });
+      }
+      function setStatus(id, status) {
+        api('/api/admin/testimonials/' + id, 'PATCH', { status: status }).then(loadReviews).catch(function (e) { alert(e.message); });
+      }
+
+      document.getElementById('review-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        api('/api/testimonials', 'POST', {
+          quote: document.getElementById('rf-quote').value,
+          name: document.getElementById('rf-name').value,
+          note: document.getElementById('rf-note').value,
+          source: document.getElementById('rf-source').value
+        }).then(function () {
+          // Submitted as pending; immediately approve the newest pending entry we just made.
+          return api('/api/admin/testimonials').then(function (rows) {
+            var mine = rows.find(function (r) { return r.status === 'pending' && r.quote === document.getElementById('rf-quote').value.replace(/\s+/g, ' ').trim(); });
+            return mine ? api('/api/admin/testimonials/' + mine.id, 'PATCH', { status: 'approved' }) : null;
+          });
+        }).then(function () {
+          msg('review-msg', 'Added and approved — it is live on the site.', true);
+          document.getElementById('review-form').reset();
+          loadReviews();
+        }).catch(function (err) { msg('review-msg', err.message, false); });
+      });
+
+      /* ---------- posts ---------- */
+      function fillPostForm(p) {
+        document.getElementById('pf-id').value = p ? p.id : '';
+        document.getElementById('pf-title').value = p ? p.title : '';
+        document.getElementById('pf-slug').value = p ? p.slug : '';
+        document.getElementById('pf-desc').value = p ? p.description : '';
+        document.getElementById('pf-body').value = p ? p.body_md : '';
+        document.getElementById('pf-pub').checked = p ? p.published : false;
+        document.getElementById('post-form-title').textContent = p ? 'Editing: ' + p.title : 'Write a field note';
+      }
+      document.getElementById('pf-new').addEventListener('click', function () { fillPostForm(null); msg('post-msg', '', true); });
+
+      function loadPosts() {
+        api('/api/admin/posts').then(function (rows) {
+          var box = document.getElementById('post-list');
+          box.innerHTML = '';
+          if (!rows.length) { box.innerHTML = '<p class="muted" style="margin-top:1rem;">No portal posts yet. The three launch posts are built into the site and stay regardless.</p>'; return; }
+          rows.forEach(function (p) {
+            var card = document.createElement('div'); card.className = 'row-card';
+            var head = document.createElement('div'); head.className = 'row-head';
+            var title = document.createElement('span'); title.className = 'row-title'; title.textContent = p.title;
+            var pill = document.createElement('span'); pill.className = 'pill ' + (p.published ? 'published' : 'draft');
+            pill.textContent = p.published ? 'published' : 'draft';
+            head.appendChild(title); head.appendChild(pill);
+            var meta = document.createElement('p'); meta.className = 'muted'; meta.textContent = 'post.html?slug=' + p.slug;
+            var actions = document.createElement('div'); actions.className = 'row-actions';
+            function actionBtn(label, cls, fn) {
+              var b = document.createElement('button'); b.type = 'button'; b.className = 'mini ' + (cls || ''); b.textContent = label;
+              b.addEventListener('click', fn); actions.appendChild(b);
+            }
+            actionBtn('Edit', 'primary', function () { fillPostForm(p); window.scrollTo({ top: 0 }); });
+            actionBtn(p.published ? 'Unpublish' : 'Publish', '', function () {
+              api('/api/admin/posts/' + p.id, 'PATCH', { published: !p.published }).then(loadPosts).catch(function (e) { alert(e.message); });
+            });
+            if (p.published) actionBtn('View', '', function () { window.open('post.html?slug=' + p.slug, '_blank'); });
+            actionBtn('Delete', 'danger', function () {
+              if (confirm('Permanently delete "' + p.title + '"?')) {
+                api('/api/admin/posts/' + p.id, 'DELETE').then(loadPosts).catch(function (e) { alert(e.message); });
+              }
+            });
+            card.appendChild(head); card.appendChild(meta); card.appendChild(actions);
+            box.appendChild(card);
+          });
+        }).catch(function (e) {
+          document.getElementById('post-list').innerHTML = '<p class="status-msg err">' + e.message + '</p>';
+        });
+      }
+
+      document.getElementById('post-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var id = document.getElementById('pf-id').value;
+        var payload = {
+          title: document.getElementById('pf-title').value,
+          slug: document.getElementById('pf-slug').value,
+          description: document.getElementById('pf-desc').value,
+          body_md: document.getElementById('pf-body').value,
+          published: document.getElementById('pf-pub').checked
+        };
+        var req = id ? api('/api/admin/posts/' + id, 'PATCH', payload) : api('/api/admin/posts', 'POST', payload);
+        req.then(function (d) {
+          msg('post-msg', (payload.published ? 'Saved and published — live at post.html?slug=' + d.slug : 'Saved as draft.'), true);
+          if (!id) fillPostForm(null);
+          loadPosts();
+        }).catch(function (err) { msg('post-msg', err.message, false); });
+      });
+
+      if (token) enterDash();
+    })();
+  </script>
+</body>
+</html>

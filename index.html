@@ -193,7 +193,26 @@
         </div>
         <!-- TODO: replace "#" with the client's Google Business Profile review
              link and Yelp business page when provided -->
-        <p class="review-cta">Worked with us? A short review on <a href="#">Google</a> or <a href="#">Yelp</a> helps the next person find the path.</p>
+        <p class="review-cta">Worked with us? A short review on <a href="#">Google</a> or <a href="#">Yelp</a> helps the next person find the path — or share your story right here:</p>
+
+        <div class="share-card">
+          <form id="share-form" aria-label="Share a testimonial">
+            <input type="text" name="website" class="cform-honey" tabindex="-1" autocomplete="off" aria-hidden="true" />
+            <div class="fgrid">
+              <label class="sfield">Name <span class="req">*</span>
+                <input type="text" id="sf-name" required maxlength="80" placeholder="First name + last initial" />
+              </label>
+              <label class="sfield">Context <span class="opt">(optional)</span>
+                <input type="text" id="sf-note" maxlength="120" placeholder="e.g. Career change" />
+              </label>
+            </div>
+            <label class="sfield">Your story <span class="req">*</span>
+              <textarea id="sf-quote" rows="4" required minlength="20" maxlength="600"></textarea>
+            </label>
+            <button type="submit" class="btn btn-primary">Submit my story</button>
+            <p class="cform-note" id="share-msg">Stories are reviewed before they appear on the site.</p>
+          </form>
+        </div>
       </div>
     </section>
 
@@ -204,7 +223,7 @@
         <p class="wp-marker"><span class="wp-dot"></span>Waypoint 04 · Field notes</p>
         <h2 class="sec-h">Notes from along the way.</h2>
         <div class="prose"><p>Short, honest writing about change, direction, and the unglamorous mechanics of following through.</p></div>
-        <div class="bgrid">
+        <div class="bgrid" id="notesgrid">
           <a class="bcard" href="blog/what-a-life-coach-actually-does.html">
             <p class="b-date">July 2026</p>
             <h3>What a life coach actually does (and doesn't do)</h3>
@@ -281,21 +300,24 @@
     </div>
   </footer>
 
+  <script src="site-config.js"></script>
   <script src="testimonials.js"></script>
   <script>
     document.getElementById('yr').textContent = new Date().getFullYear();
 
-    /* Testimonials: render cards from testimonials.js, with source badges
-       and (when reviews come from more than one source) filter buttons. */
+    /* Testimonials: prefer live approved reviews from the API; fall back to
+       the bundled samples in testimonials.js when the API is unreachable or
+       has no approved reviews yet. Source badges always shown; filter
+       buttons appear when reviews span more than one source. */
     (function () {
       var grid = document.getElementById('tgrid');
-      if (!grid || typeof TESTIMONIALS === 'undefined') return;
+      if (!grid) return;
       var LABELS = { google: 'Google', yelp: 'Yelp', instagram: 'Instagram', facebook: 'Facebook', direct: 'Client note' };
       var ICONS = {
         google: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.35 11.1H12v3.9h5.4c-.55 2.4-2.6 3.9-5.4 3.9a6 6 0 1 1 0-12c1.5 0 2.9.55 3.95 1.45l2.85-2.85A9.6 9.6 0 0 0 12 2.4a9.6 9.6 0 1 0 0 19.2c5.5 0 9.4-3.9 9.4-9.4 0-.37-.02-.74-.05-1.1z"/></svg>',
         yelp: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2l1.9 5.9 6.2.1-5 3.6 1.9 5.9L12 13.8l-5 3.7 1.9-5.9-5-3.6 6.2-.1z"/></svg>'
       };
-      var shown = TESTIMONIALS.filter(function (t) { return t.show; });
+      var shown = [];
       var current = 'all';
 
       function card(t) {
@@ -327,10 +349,13 @@
              .forEach(function (t) { grid.appendChild(card(t)); });
       }
 
-      var bar = document.getElementById('tfilter');
-      var sources = [];
-      shown.forEach(function (t) { if (t.source && sources.indexOf(t.source) < 0) sources.push(t.source); });
-      if (bar && sources.length > 1) {
+      function buildChips() {
+        var bar = document.getElementById('tfilter');
+        if (!bar) return;
+        bar.innerHTML = '';
+        var sources = [];
+        shown.forEach(function (t) { if (t.source && sources.indexOf(t.source) < 0) sources.push(t.source); });
+        if (sources.length < 2) { bar.hidden = true; return; }
         bar.hidden = false;
         ['all'].concat(sources).forEach(function (s) {
           var b = document.createElement('button'); b.type = 'button';
@@ -345,7 +370,71 @@
           bar.appendChild(b);
         });
       }
-      render();
+
+      function init(list) { shown = list; current = 'all'; buildChips(); render(); }
+      function fallback() {
+        if (typeof TESTIMONIALS !== 'undefined') init(TESTIMONIALS.filter(function (t) { return t.show; }));
+      }
+      litpathFetch('/api/testimonials')
+        .then(function (rows) { if (rows && rows.length) init(rows); else fallback(); })
+        .catch(fallback);
+    })();
+
+    /* Share-your-story: public testimonial submission -> pending queue. */
+    (function () {
+      var form = document.getElementById('share-form');
+      if (!form) return;
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var btn = form.querySelector('button');
+        var msgEl = document.getElementById('share-msg');
+        btn.disabled = true;
+        msgEl.textContent = 'Sending — this can take up to a minute…';
+        msgEl.className = 'cform-note';
+        fetch(LITPATH_API + '/api/testimonials', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            quote: document.getElementById('sf-quote').value,
+            name: document.getElementById('sf-name').value,
+            note: document.getElementById('sf-note').value,
+            source: 'direct',
+            website: form.querySelector('[name="website"]').value
+          })
+        }).then(function (r) { return r.json(); }).then(function (j) {
+          if (j.error) throw new Error(j.error.message);
+          msgEl.textContent = 'Thank you! Your story was received and will appear after a quick review.';
+          form.reset();
+        }).catch(function (err) {
+          msgEl.textContent = (err.message === 'Failed to fetch')
+            ? 'Could not reach the server — please try again in a minute, or email your story to Robbertferd@gmail.com.'
+            : err.message;
+        }).finally(function () { btn.disabled = false; });
+      });
+    })();
+
+    /* Field notes: merge live portal posts with the built-in launch posts,
+       newest first. If the API is down, the static cards stay as-is. */
+    (function () {
+      var grid = document.getElementById('notesgrid');
+      if (!grid) return;
+      litpathFetch('/api/posts').then(function (rows) {
+        if (!rows || !rows.length) return;
+        var all = rows.map(function (p) {
+          return { url: 'post.html?slug=' + encodeURIComponent(p.slug), title: p.title, description: p.description, published_at: p.published_at };
+        }).concat(STATIC_POSTS);
+        all.sort(function (a, b) { return new Date(b.published_at) - new Date(a.published_at); });
+        grid.innerHTML = '';
+        all.slice(0, 3).forEach(function (p) {
+          var a = document.createElement('a'); a.className = 'bcard'; a.href = p.url;
+          var d = document.createElement('p'); d.className = 'b-date'; d.textContent = litpathMonthYear(p.published_at);
+          var h = document.createElement('h3'); h.textContent = p.title;
+          var desc = document.createElement('p'); desc.textContent = p.description;
+          var r = document.createElement('span'); r.className = 'b-read'; r.textContent = 'Read the note →';
+          a.appendChild(d); a.appendChild(h); a.appendChild(desc); a.appendChild(r);
+          grid.appendChild(a);
+        });
+      }).catch(function () {});
     })();
     (function () {
       var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

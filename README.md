@@ -24,7 +24,49 @@ Uses [FormSubmit](https://formsubmit.co) → delivers to `Robbertferd@gmail.com`
 that inbox — the client must click the confirmation link once, after which all
 submissions flow normally.
 
+## Admin portal & API (semi-live content)
+
+The site now has a lightweight backend so the client can manage content
+without touching files:
+
+- **`admin.html`** — password-protected portal (one approved account).
+  Testimonials tab: pending queue → Approve / Hide / Delete, plus manual
+  paste-in for reviews arriving via Google/Yelp/email. Blog tab: write
+  field notes in markdown, save as draft, publish/unpublish.
+- **Visitors** can submit their own story on the home page ("Share your
+  story") — it lands in the pending queue and displays only after approval.
+- **`api/`** — Express + Postgres API (see `api/server.js` for endpoints).
+  Public pages fetch live content with a 4.5s timeout and fall back to the
+  static bundled content, so a sleeping free-tier server never blanks the
+  site.
+- `site-config.js` holds the API base URL (`LITPATH_API`) — one line to
+  change if the service URL differs.
+
+### One-time deployment (≈10 minutes)
+
+1. **Neon (free Postgres):** create a project at https://neon.tech →
+   copy the connection string (`postgres://…neon.tech/…?sslmode=require`).
+2. **Render:** New → Blueprint → pick this repo (`render.yaml` defines the
+   service `the-lit-path-api`, free plan, root `api/`). When prompted, set:
+   - `DATABASE_URL` = the Neon connection string
+   - `ADMIN_PASSWORD` = the portal password (pick something strong)
+   - `JWT_SECRET` auto-generates.
+3. Confirm the service URL is `https://the-lit-path-api.onrender.com` —
+   if Render assigned a different name, update `LITPATH_API` in
+   `site-config.js` and push.
+4. Open `admin.html` on the live site, sign in, and you're managing content.
+
+Free-tier behavior: the API sleeps after ~15 idle minutes; the first
+request after that takes 30–50s (visitors see the static fallback
+meanwhile; the admin portal shows a "waking up" note).
+
 ## Adding a blog post
+
+**Preferred: use the admin portal** (blog tab) — markdown in, live in
+seconds at `post.html?slug=…`, merged automatically into the blog index
+and the home-page Field Notes.
+
+**Static alternative** (for hand-crafted posts with custom layout):
 
 1. Copy `blog/_template.html` → `blog/short-slug.html` (lowercase, hyphens).
 2. Replace the ALL-CAPS placeholders (title, description, date, slug, body) —

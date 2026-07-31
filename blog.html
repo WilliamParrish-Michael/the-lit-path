@@ -15,6 +15,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Alegreya+Sans:wght@400;500;700&family=Spline+Sans+Mono:wght@500&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="styles.css" />
+<script src="site-config.js"></script>
 </head>
 <body>
 
@@ -53,7 +54,7 @@
 
     <section class="blog-index">
       <div class="wrap">
-        <div class="bgrid">
+        <div class="bgrid" id="bloggrid">
           <a class="bcard" href="blog/what-a-life-coach-actually-does.html">
             <p class="b-date">July 2026</p>
             <h3>What a life coach actually does (and doesn't do)</h3>
@@ -87,6 +88,34 @@
     </div>
   </footer>
 
-  <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+  <script>
+    document.getElementById('yr').textContent = new Date().getFullYear();
+
+    /* Merge live portal posts with the built-in launch posts, newest
+       first. If the API is down, the static cards remain untouched. */
+    (function () {
+      var grid = document.getElementById('bloggrid');
+      if (!grid) return;
+      litpathFetch('/api/posts').then(function (rows) {
+        if (!rows || !rows.length) return;
+        var all = rows.map(function (p) {
+          return { url: 'post.html?slug=' + encodeURIComponent(p.slug), title: p.title, description: p.description, published_at: p.published_at };
+        }).concat(STATIC_POSTS.map(function (p) {
+          return { url: p.url, title: p.title, description: p.description, published_at: p.published_at };
+        }));
+        all.sort(function (a, b) { return new Date(b.published_at) - new Date(a.published_at); });
+        grid.innerHTML = '';
+        all.forEach(function (p) {
+          var a = document.createElement('a'); a.className = 'bcard'; a.href = p.url;
+          var d = document.createElement('p'); d.className = 'b-date'; d.textContent = litpathMonthYear(p.published_at);
+          var h = document.createElement('h3'); h.textContent = p.title;
+          var desc = document.createElement('p'); desc.textContent = p.description;
+          var r = document.createElement('span'); r.className = 'b-read'; r.textContent = 'Read the note →';
+          a.appendChild(d); a.appendChild(h); a.appendChild(desc); a.appendChild(r);
+          grid.appendChild(a);
+        });
+      }).catch(function () {});
+    })();
+  </script>
 </body>
 </html>

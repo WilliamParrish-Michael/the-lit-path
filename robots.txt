@@ -1,3 +1,3 @@
 User-agent: *
-Allow: /
+Disallow: /admin.html
 Sitemap: https://williamparrish-michael.github.io/the-lit-path/sitemap.xml
