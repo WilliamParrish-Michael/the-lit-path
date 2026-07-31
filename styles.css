@@ -441,6 +441,107 @@ footer { background: var(--dawn); color: var(--ink); padding: 2.5rem 0 3rem; bor
 .blog-index { background: var(--dawn); color: var(--ink); padding: 4rem 0 5.5rem; }
 .blog-index .bgrid { grid-template-columns: repeat(2, 1fr); }
 
+/* ============================================================
+   Award-site presentation layer (Trionn-style): preloader,
+   custom cursor, mega display type, marquee, mega CTA.
+   All gated behind JS (.anim on <html>) and prefers-reduced-motion.
+   ============================================================ */
+
+/* Preloader */
+#preloader {
+  position: fixed; inset: 0; z-index: 2000; background: var(--night);
+  display: flex; align-items: flex-end; justify-content: space-between;
+  padding: 2.2rem 3rem;
+  transform: translateY(0);
+  transition: transform 0.9s cubic-bezier(0.77, 0, 0.18, 1);
+}
+#preloader.done { transform: translateY(-101%); }
+.pre-brand {
+  font-family: var(--display); font-weight: 600;
+  font-size: clamp(2rem, 6vw, 4rem); color: var(--cream);
+}
+.pre-brand em { font-style: italic; color: var(--lamplight); }
+.pre-count { font-family: var(--trail); font-size: 1.1rem; color: var(--lamplight); letter-spacing: 0.15em; }
+body.loading { overflow: hidden; }
+
+/* Custom cursor (fine pointers only) */
+.cursor-dot, .cursor-ring {
+  position: fixed; top: 0; left: 0; pointer-events: none; z-index: 1600;
+  border-radius: 50%; transform: translate(-50%, -50%);
+  display: none;
+}
+html.has-cursor .cursor-dot, html.has-cursor .cursor-ring { display: block; }
+html.has-cursor body, html.has-cursor a, html.has-cursor button { cursor: none; }
+.cursor-dot { width: 8px; height: 8px; background: var(--lamplight); }
+.cursor-ring {
+  width: 38px; height: 38px; border: 1px solid rgba(255, 180, 77, 0.65);
+  transition: width 0.25s ease, height 0.25s ease, background 0.25s ease;
+}
+.cursor-ring.on {
+  width: 64px; height: 64px; background: rgba(255, 180, 77, 0.12);
+}
+
+/* Mega hero type */
+.hero-mega {
+  font-family: var(--display); font-weight: 600; text-transform: uppercase;
+  line-height: 0.97; letter-spacing: -0.015em;
+  font-size: clamp(3rem, 9.5vw, 9rem);
+  max-width: none; margin-top: 0.6rem;
+}
+.hero-mega .ln { display: block; overflow: hidden; padding-bottom: 0.06em; }
+.hero-mega .ln > span { display: inline-block; }
+html.anim .hero-mega .ln > span { transform: translateY(112%); }
+.hero-mega em { font-style: italic; color: var(--lamplight); }
+.hero-mega .outline {
+  color: transparent; -webkit-text-stroke: 2px rgba(246, 239, 227, 0.85);
+}
+
+/* Marquee */
+.marquee {
+  overflow: hidden; background: #10142E;
+  padding: 1.4rem 0 1.7rem;
+  border-top: 1px solid rgba(246, 239, 227, 0.07);
+}
+.marquee-track {
+  display: flex; align-items: center; gap: 2.6rem; width: max-content;
+  animation: mq 30s linear infinite; will-change: transform;
+}
+.mq-item {
+  font-family: var(--display); font-weight: 600; text-transform: uppercase;
+  font-size: clamp(2.2rem, 5vw, 4.2rem); white-space: nowrap; color: var(--cream);
+}
+.mq-item.outline { color: transparent; -webkit-text-stroke: 1.5px rgba(246, 239, 227, 0.7); }
+.mq-item.it { font-style: italic; color: var(--lamplight); text-transform: none; }
+.mq-star { color: var(--lamplight); font-size: clamp(1.2rem, 2.4vw, 2rem); }
+@keyframes mq { to { transform: translateX(-50%); } }
+
+/* Mega CTA */
+.mega-cta { background: var(--dawn); color: var(--ink); padding: 6.5rem 0 5.5rem; }
+.mega-cta h2 {
+  font-family: var(--display); font-weight: 600; text-transform: uppercase;
+  font-size: clamp(2.8rem, 8.5vw, 8rem); line-height: 0.97; letter-spacing: -0.015em;
+}
+.mega-cta h2 .ln { display: block; overflow: hidden; padding-bottom: 0.06em; }
+.mega-cta h2 .ln > span { display: inline-block; }
+html.anim .mega-cta h2 .ln > span { transform: translateY(112%); }
+.mega-cta h2 em { font-style: italic; color: var(--ember); }
+.mega-cta .cta-row { display: flex; align-items: center; gap: 1.6rem; flex-wrap: wrap; margin-top: 2.6rem; }
+.btn-big { font-size: 1.15rem; padding: 1.15rem 2.6rem; }
+.cta-note { color: var(--ink-dim); font-size: 0.95rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  #preloader { display: none; }
+  body.loading { overflow: auto; }
+  html.anim .hero-mega .ln > span, html.anim .mega-cta h2 .ln > span { transform: none; }
+  .marquee-track { animation: none; }
+  .cursor-dot, .cursor-ring { display: none !important; }
+}
+
+@media (max-width: 860px) {
+  #preloader { padding: 1.4rem 1.5rem; }
+  .mega-cta { padding: 4.5rem 0 4rem; }
+}
+
 /* ---------- Motion ---------- */
 
 .rise { opacity: 0; transform: translateY(14px); transition: opacity 0.7s ease, transform 0.7s ease; }

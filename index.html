@@ -29,7 +29,14 @@
 }
 </script>
 </head>
-<body>
+<body class="loading">
+
+  <div id="preloader" aria-hidden="true">
+    <span class="pre-brand">The <em>Lit</em> Path</span>
+    <span class="pre-count" id="pre-count">00</span>
+  </div>
+  <div class="cursor-ring" aria-hidden="true"></div>
+  <div class="cursor-dot" aria-hidden="true"></div>
 
   <div class="topbar">
     <div class="wrap">
@@ -80,8 +87,12 @@
       <span class="firefly" style="left:40%; top:78%;"></span>
       <div class="wrap">
         <p class="hero-eyebrow rise">The Lit Path · Life coaching</p>
-        <h1 class="rise">You don't have to find the way <em>in the dark.</em></h1>
-        <p class="hero-sub rise">One-on-one life coaching for people standing at a turning point — ready for what's next, unsure of the first step. The path is easier when someone walks it with you, holding the light.</p>
+        <h1 class="hero-mega" aria-label="No one walks the path alone.">
+          <span class="ln" aria-hidden="true"><span>No one walks</span></span>
+          <span class="ln" aria-hidden="true"><span class="outline">the path</span></span>
+          <span class="ln" aria-hidden="true"><span><em>alone.</em></span></span>
+        </h1>
+        <p class="hero-sub rise">You don't have to find the way in the dark. One-on-one life coaching for people standing at a turning point — ready for what's next, unsure of the first step. The path is easier when someone walks it with you, holding the light.</p>
         <div class="hero-ctas rise">
           <a class="btn btn-primary" href="#contact">Book a free discovery call</a>
           <a class="btn btn-ghost" href="#work">See how it works</a>
@@ -106,7 +117,20 @@
       </div>
     </header>
 
-    <div class="curve" style="background: var(--night);" aria-hidden="true"><svg viewBox="0 0 1440 64" preserveAspectRatio="none"><path d="M0 34 C 240 62, 480 6, 720 30 C 960 54, 1200 14, 1440 34 L1440 64 L0 64 Z" fill="#232A52"/></svg></div>
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span class="mq-item">Clarity</span><span class="mq-star">✦</span>
+        <span class="mq-item outline">Direction</span><span class="mq-star">✦</span>
+        <span class="mq-item it">accountability</span><span class="mq-star">✦</span>
+        <span class="mq-item">Momentum</span><span class="mq-star">✦</span>
+        <span class="mq-item">Clarity</span><span class="mq-star">✦</span>
+        <span class="mq-item outline">Direction</span><span class="mq-star">✦</span>
+        <span class="mq-item it">accountability</span><span class="mq-star">✦</span>
+        <span class="mq-item">Momentum</span><span class="mq-star">✦</span>
+      </div>
+    </div>
+
+    <div class="curve" style="background: #10142E;" aria-hidden="true"><svg viewBox="0 0 1440 64" preserveAspectRatio="none"><path d="M0 34 C 240 62, 480 6, 720 30 C 960 54, 1200 14, 1440 34 L1440 64 L0 64 Z" fill="#232A52"/></svg></div>
 
     <section id="about" class="waypoint stage-dusk">
       <span class="firefly" style="left:82%; top:30%;"></span>
@@ -249,6 +273,19 @@
 
     <div class="curve" style="background: var(--peach);" aria-hidden="true"><svg viewBox="0 0 1440 64" preserveAspectRatio="none"><path d="M0 34 C 240 62, 480 6, 720 30 C 960 54, 1200 14, 1440 34 L1440 64 L0 64 Z" fill="#F6EBDA"/></svg></div>
 
+    <section class="mega-cta">
+      <div class="wrap">
+        <h2 aria-label="Ready to step onto the path?">
+          <span class="ln" aria-hidden="true"><span>Ready to step</span></span>
+          <span class="ln" aria-hidden="true"><span>onto the <em>path?</em></span></span>
+        </h2>
+        <div class="cta-row">
+          <a class="btn btn-primary btn-big magnetic" href="#contact">Book a free discovery call</a>
+          <span class="cta-note">30 minutes · no cost · no pressure</span>
+        </div>
+      </div>
+    </section>
+
     <section id="contact" class="waypoint stage-dawn">
       <div class="wrap">
         <p class="wp-marker"><span class="wp-dot"></span>Waypoint 05 · Step onto the path</p>
@@ -300,6 +337,9 @@
     </div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
   <script src="site-config.js"></script>
   <script src="testimonials.js"></script>
   <script>
@@ -547,6 +587,118 @@
       window.addEventListener('load', build);
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { setTimeout(build, 100); });
       build();
+    })();
+
+    /* Award-site layer: preloader, smooth scroll (Lenis), masked type
+       reveals, marquee skew, custom cursor, magnetic buttons (GSAP).
+       Degrades gracefully: no GSAP / reduced motion -> everything is
+       simply visible and the page behaves like a normal site. */
+    (function () {
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var pre = document.getElementById('preloader');
+      if (reduce || !window.gsap) {
+        document.body.classList.remove('loading');
+        if (pre) pre.remove();
+        return;
+      }
+      document.documentElement.classList.add('anim');
+      gsap.registerPlugin(ScrollTrigger);
+      gsap.set('.hero-mega .ln > span', { yPercent: 112 });
+      gsap.set('.mega-cta h2 .ln > span', { yPercent: 112 });
+
+      /* Preloader counter -> curtain -> hero type reveal */
+      var countEl = document.getElementById('pre-count');
+      var n = 0;
+      var iv = setInterval(function () {
+        n = Math.min(100, n + Math.ceil(Math.random() * 16));
+        countEl.textContent = (n < 10 ? '0' : '') + n;
+        if (n >= 100) {
+          clearInterval(iv);
+          document.body.classList.remove('loading');
+          pre.classList.add('done');
+          gsap.to('.hero-mega .ln > span', { yPercent: 0, duration: 1.1, ease: 'power4.out', stagger: 0.09, delay: 0.35 });
+          setTimeout(function () { pre.remove(); }, 1000);
+        }
+      }, 65);
+
+      /* Smooth inertial scroll */
+      var lenis = null;
+      if (window.Lenis) {
+        lenis = new Lenis({ lerp: 0.1 });
+        (function raf(t) { lenis.raf(t); requestAnimationFrame(raf); })(0);
+        lenis.on('scroll', ScrollTrigger.update);
+        document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+          a.addEventListener('click', function (e) {
+            var id = a.getAttribute('href');
+            if (id.length > 1 && document.querySelector(id)) { e.preventDefault(); lenis.scrollTo(id, { offset: -60 }); }
+          });
+        });
+      }
+
+      /* Mega CTA reveal + section content reveals */
+      gsap.to('.mega-cta h2 .ln > span', {
+        yPercent: 0, duration: 1, ease: 'power4.out', stagger: 0.1,
+        scrollTrigger: { trigger: '.mega-cta', start: 'top 75%' }
+      });
+      gsap.utils.toArray('.sec-h, .step, .share-card, .cform, .contact-card').forEach(function (el) {
+        gsap.from(el, {
+          y: 36, opacity: 0, duration: 0.9, ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 88%' }
+        });
+      });
+
+      /* Hero scene parallax */
+      gsap.to('.hero-scene', {
+        yPercent: 14, ease: 'none',
+        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+      });
+
+      /* Marquee skews with scroll velocity */
+      var mq = document.querySelector('.marquee');
+      if (mq) {
+        var clampSkew = gsap.utils.clamp(-7, 7);
+        var proxy = { skew: 0 };
+        ScrollTrigger.create({
+          onUpdate: function (self) {
+            var skew = clampSkew(self.getVelocity() / -280);
+            if (Math.abs(skew) > Math.abs(proxy.skew)) {
+              proxy.skew = skew;
+              gsap.to(proxy, {
+                skew: 0, duration: 0.7, ease: 'power3', overwrite: true,
+                onUpdate: function () { mq.style.transform = 'skewX(' + proxy.skew + 'deg)'; }
+              });
+            }
+          }
+        });
+      }
+
+      /* Custom cursor + magnetic buttons (fine pointers only) */
+      if (window.matchMedia('(pointer: fine)').matches) {
+        document.documentElement.classList.add('has-cursor');
+        var dot = document.querySelector('.cursor-dot');
+        var ring = document.querySelector('.cursor-ring');
+        var tx = -100, ty = -100, rx = -100, ry = -100;
+        window.addEventListener('mousemove', function (e) {
+          tx = e.clientX; ty = e.clientY;
+          dot.style.left = tx + 'px'; dot.style.top = ty + 'px';
+        });
+        gsap.ticker.add(function () {
+          rx += (tx - rx) * 0.16; ry += (ty - ry) * 0.16;
+          ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+        });
+        document.addEventListener('mouseover', function (e) {
+          if (e.target.closest('a, button')) ring.classList.add('on'); else ring.classList.remove('on');
+        });
+        document.querySelectorAll('.hero-ctas .btn, .magnetic').forEach(function (el) {
+          el.addEventListener('mousemove', function (e) {
+            var r = el.getBoundingClientRect();
+            gsap.to(el, { x: (e.clientX - r.left - r.width / 2) * 0.3, y: (e.clientY - r.top - r.height / 2) * 0.3, duration: 0.3 });
+          });
+          el.addEventListener('mouseleave', function () {
+            gsap.to(el, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.45)' });
+          });
+        });
+      }
     })();
   </script>
 </body>
