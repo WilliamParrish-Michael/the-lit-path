@@ -50,6 +50,7 @@ body {
   background: var(--night);
   color: var(--cream);
   -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
 }
 
 /* Film grain — kills the flat digital look. Pure CSS, no asset. */
