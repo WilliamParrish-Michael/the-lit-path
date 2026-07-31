@@ -618,20 +618,27 @@
         }
       }, 2500);
 
-      /* Preloader counter -> curtain -> hero type reveal */
+      /* Preloader counter -> curtain -> hero type reveal.
+         Hard 4s cap: background tabs throttle timers, and the preloader
+         must never hold the page hostage. */
       var countEl = document.getElementById('pre-count');
-      var n = 0;
+      var n = 0, finished = false;
+      function finishPreloader() {
+        if (finished) return;
+        finished = true;
+        clearInterval(iv);
+        countEl.textContent = '100';
+        document.body.classList.remove('loading');
+        pre.classList.add('done');
+        gsap.to('.hero-mega .ln > span', { yPercent: 0, duration: 1.1, ease: 'power4.out', stagger: 0.09, delay: 0.35 });
+        setTimeout(function () { pre.remove(); }, 1000);
+      }
       var iv = setInterval(function () {
         n = Math.min(100, n + Math.ceil(Math.random() * 16));
         countEl.textContent = (n < 10 ? '0' : '') + n;
-        if (n >= 100) {
-          clearInterval(iv);
-          document.body.classList.remove('loading');
-          pre.classList.add('done');
-          gsap.to('.hero-mega .ln > span', { yPercent: 0, duration: 1.1, ease: 'power4.out', stagger: 0.09, delay: 0.35 });
-          setTimeout(function () { pre.remove(); }, 1000);
-        }
+        if (n >= 100) finishPreloader();
       }, 65);
+      setTimeout(finishPreloader, 4000);
 
       /* Smooth inertial scroll */
       var lenis = null;
