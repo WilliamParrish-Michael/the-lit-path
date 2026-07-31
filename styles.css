@@ -455,8 +455,12 @@ footer { background: var(--dawn); color: var(--ink); padding: 2.5rem 0 3rem; bor
   padding: 2.2rem 3rem;
   transform: translateY(0);
   transition: transform 0.9s cubic-bezier(0.77, 0, 0.18, 1);
+  /* Pure-CSS failsafe: the curtain ALWAYS lifts by ~4.5s even if every
+     line of JS fails after first paint. */
+  animation: preexit 0.9s cubic-bezier(0.77, 0, 0.18, 1) 4.5s forwards;
 }
 #preloader.done { transform: translateY(-101%); }
+@keyframes preexit { to { transform: translateY(-101%); visibility: hidden; } }
 .pre-brand {
   font-family: var(--display); font-weight: 600;
   font-size: clamp(2rem, 6vw, 4rem); color: var(--cream);
@@ -491,7 +495,14 @@ html.has-cursor body, html.has-cursor a, html.has-cursor button { cursor: none; 
 }
 .hero-mega .ln { display: block; overflow: hidden; padding-bottom: 0.06em; }
 .hero-mega .ln > span { display: inline-block; }
-html.anim .hero-mega .ln > span { transform: translateY(112%); }
+/* Masked reveal is pure CSS: JS only flips the .hero-in class. */
+html.anim .hero-mega .ln > span {
+  transform: translateY(112%);
+  transition: transform 1.05s cubic-bezier(0.19, 1, 0.22, 1);
+}
+html.anim.hero-in .hero-mega .ln > span { transform: none; }
+.hero-mega .ln:nth-child(2) > span { transition-delay: 0.09s; }
+.hero-mega .ln:nth-child(3) > span { transition-delay: 0.18s; }
 .hero-mega em { font-style: italic; color: var(--lamplight); }
 .hero-mega .outline {
   color: transparent; -webkit-text-stroke: 2px rgba(246, 239, 227, 0.85);
@@ -524,7 +535,9 @@ html.anim .hero-mega .ln > span { transform: translateY(112%); }
 }
 .mega-cta h2 .ln { display: block; overflow: hidden; padding-bottom: 0.06em; }
 .mega-cta h2 .ln > span { display: inline-block; }
-html.anim .mega-cta h2 .ln > span { transform: translateY(112%); }
+html.anim .mega-cta:not(.in) h2 .ln > span { transform: translateY(112%); }
+html.anim .mega-cta h2 .ln > span { transition: transform 1s cubic-bezier(0.19, 1, 0.22, 1); }
+.mega-cta h2 .ln:nth-child(2) > span { transition-delay: 0.1s; }
 .mega-cta h2 em { font-style: italic; color: var(--ember); }
 .mega-cta .cta-row { display: flex; align-items: center; gap: 1.6rem; flex-wrap: wrap; margin-top: 2.6rem; }
 .btn-big { font-size: 1.15rem; padding: 1.15rem 2.6rem; }

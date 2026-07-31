@@ -29,7 +29,7 @@
 }
 </script>
 </head>
-<body class="loading">
+<body>
 
   <div id="preloader" aria-hidden="true">
     <span class="pre-brand">The <em>Lit</em> Path</span>
@@ -602,21 +602,23 @@
         return;
       }
       document.documentElement.classList.add('anim');
+      document.body.classList.add('loading');
       gsap.registerPlugin(ScrollTrigger);
-      gsap.set('.hero-mega .ln > span', { yPercent: 112 });
-      gsap.set('.mega-cta h2 .ln > span', { yPercent: 112 });
 
-      /* Watchdog: if the animation engine stalls (rAF frozen — e.g. the
-         page loaded in a hidden/occluded window), force all masked text
-         visible so nothing is ever lost. No-op when animations run. */
-      var t0 = gsap.ticker.time;
-      setTimeout(function () {
-        if (gsap.ticker.time - t0 < 0.5) {
-          document.querySelectorAll('.hero-mega .ln > span, .mega-cta h2 .ln > span').forEach(function (el) {
-            el.style.transform = 'none';
-          });
-        }
-      }, 2500);
+      /* Failsafe: the hero text reveals by 3.5s no matter what
+         (idempotent — normally the preloader triggers it at ~1.3s). */
+      setTimeout(function () { document.documentElement.classList.add('hero-in'); }, 3500);
+
+      /* Mega CTA reveals via IntersectionObserver + CSS transition —
+         no animation engine in the critical path. */
+      var mc = document.querySelector('.mega-cta');
+      if (mc && 'IntersectionObserver' in window) {
+        new IntersectionObserver(function (entries, obs) {
+          if (entries[0].isIntersecting) { mc.classList.add('in'); obs.disconnect(); }
+        }, { threshold: 0.25 }).observe(mc);
+      } else if (mc) {
+        mc.classList.add('in');
+      }
 
       /* Preloader counter -> curtain -> hero type reveal.
          Hard 4s cap: background tabs throttle timers, and the preloader
@@ -630,7 +632,7 @@
         countEl.textContent = '100';
         document.body.classList.remove('loading');
         pre.classList.add('done');
-        gsap.to('.hero-mega .ln > span', { yPercent: 0, duration: 1.1, ease: 'power4.out', stagger: 0.09, delay: 0.35 });
+        setTimeout(function () { document.documentElement.classList.add('hero-in'); }, 350);
         setTimeout(function () { pre.remove(); }, 1000);
       }
       var iv = setInterval(function () {
@@ -654,11 +656,7 @@
         });
       }
 
-      /* Mega CTA reveal + section content reveals */
-      gsap.to('.mega-cta h2 .ln > span', {
-        yPercent: 0, duration: 1, ease: 'power4.out', stagger: 0.1,
-        scrollTrigger: { trigger: '.mega-cta', start: 'top 75%' }
-      });
+      /* Section content reveals (decorative — safe to lose) */
       gsap.utils.toArray('.sec-h, .step, .share-card, .cform, .contact-card').forEach(function (el) {
         gsap.from(el, {
           y: 36, opacity: 0, duration: 0.9, ease: 'power3.out',
