@@ -337,9 +337,9 @@
     </div>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+  <script src="js/gsap.min.js"></script>
+  <script src="js/ScrollTrigger.min.js"></script>
+  <script src="js/lenis.min.js"></script>
   <script src="site-config.js"></script>
   <script src="testimonials.js"></script>
   <script>
@@ -603,7 +603,6 @@
       }
       document.documentElement.classList.add('anim');
       document.body.classList.add('loading');
-      gsap.registerPlugin(ScrollTrigger);
 
       /* Failsafe: the hero text reveals by 3.5s no matter what
          (idempotent — normally the preloader triggers it at ~1.3s). */
@@ -642,12 +641,18 @@
       }, 65);
       setTimeout(finishPreloader, 4000);
 
+      /* ---- Decorative layer below: guarded so a missing library or an
+         exception can never break the content or controls above. ---- */
+      try {
+      var hasST = !!window.ScrollTrigger;
+      if (hasST) gsap.registerPlugin(ScrollTrigger);
+
       /* Smooth inertial scroll */
       var lenis = null;
       if (window.Lenis) {
         lenis = new Lenis({ lerp: 0.1 });
         (function raf(t) { lenis.raf(t); requestAnimationFrame(raf); })(0);
-        lenis.on('scroll', ScrollTrigger.update);
+        if (hasST) lenis.on('scroll', ScrollTrigger.update);
         document.querySelectorAll('a[href^="#"]').forEach(function (a) {
           a.addEventListener('click', function (e) {
             var id = a.getAttribute('href');
@@ -656,6 +661,7 @@
         });
       }
 
+      if (hasST) {
       /* Section content reveals (decorative — safe to lose) */
       gsap.utils.toArray('.sec-h, .step, .share-card, .cform, .contact-card').forEach(function (el) {
         gsap.from(el, {
@@ -688,6 +694,7 @@
           }
         });
       }
+      }
 
       /* Custom cursor + magnetic buttons (fine pointers only) */
       if (window.matchMedia('(pointer: fine)').matches) {
@@ -716,6 +723,7 @@
           });
         });
       }
+      } catch (e) { /* decorative layer failed — content unaffected */ }
     })();
   </script>
 </body>

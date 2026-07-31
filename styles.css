@@ -577,7 +577,14 @@ html.anim .mega-cta h2 .ln > span { transition: transform 1s cubic-bezier(0.19, 
   .tgrid { grid-template-columns: 1fr; }
   .tcard:nth-child(odd), .tcard:nth-child(even) { transform: none; }
   .fgrid { grid-template-columns: 1fr; }
-  .hero { padding: 4.5rem 0 0; }
+  /* First phone screen must carry the message: headline + sub + CTA
+     all visible without scrolling. */
+  .hero { padding: 2rem 0 0; }
+  .hero-eyebrow { margin-bottom: 0.9rem; }
+  .hero-mega { font-size: clamp(2.4rem, 11vw, 4rem); margin-top: 0.3rem; }
+  .hero-sub { margin-top: 1rem; font-size: 1.05rem; }
+  .hero-ctas { margin-top: 1.3rem; }
+  .hero-scene { margin-top: 1.4rem; }
   .waypoint { padding: 3.5rem 0 3rem; }
   .navlinks { gap: 1rem; font-size: 0.9rem; }
   .curve { height: 36px; }
