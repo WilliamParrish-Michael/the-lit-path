@@ -15,6 +15,9 @@
      Display — Fraunces (soft serif, italic for warmth)
      Body    — Alegreya Sans
      Trail   — Spline Sans Mono (waypoint markers)
+   Signature: a dotted trail runs down the page; a lantern-glow
+   travels along it as you scroll (built by trail.js logic inline
+   in index.html). Sections are joined by curved "hill" seams.
    ============================================================ */
 
 :root {
@@ -49,6 +52,14 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Film grain — kills the flat digital look. Pure CSS, no asset. */
+body::after {
+  content: "";
+  position: fixed; inset: 0; pointer-events: none; z-index: 999;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
 img, svg { max-width: 100%; display: block; }
 
 a { color: var(--lamplight); text-decoration: none; }
@@ -68,6 +79,12 @@ textarea:focus-visible {
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
 }
 
+main { position: relative; }
+
+/* The scroll-trail SVG injected by script */
+#trail { position: absolute; top: 0; pointer-events: none; z-index: 0; overflow: visible; }
+.waypoint .wrap, .hero .wrap { position: relative; z-index: 1; }
+
 /* ---------- Top bar ---------- */
 
 .topbar {
@@ -80,9 +97,9 @@ textarea:focus-visible {
   display: flex; align-items: center; justify-content: space-between;
   gap: 1rem; padding-top: 0.8rem; padding-bottom: 0.8rem;
 }
-.brand { display: flex; align-items: center; gap: 0.6rem; color: var(--cream); }
+.brand { display: flex; align-items: center; gap: 0.65rem; color: var(--cream); }
 .brand:hover { color: var(--cream); }
-.brand-flame { width: 26px; height: 26px; flex: none; }
+.brand-flame { width: 30px; height: 30px; flex: none; }
 .brand-text {
   font-family: var(--display);
   font-size: 1.2rem; font-weight: 600; letter-spacing: 0.01em;
@@ -91,28 +108,34 @@ textarea:focus-visible {
 .navlinks { display: flex; gap: 1.4rem; flex-wrap: wrap; }
 .navlinks a {
   color: var(--cream-dim); font-size: 0.95rem; font-weight: 500;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.02em; position: relative;
+}
+.navlinks a::after {
+  content: ""; position: absolute; left: 0; right: 100%; bottom: -4px;
+  height: 2px; background: var(--lamplight); border-radius: 2px;
+  transition: right 0.25s ease;
 }
 .navlinks a:hover { color: var(--lamplight); }
+.navlinks a:hover::after { right: 0; }
 
 /* ---------- Hero ---------- */
 
 .hero {
   position: relative; overflow: hidden;
   background:
-    radial-gradient(ellipse 60% 45% at 72% 28%, rgba(255, 180, 77, 0.14), transparent 70%),
-    var(--night);
-  padding: 7rem 0 6rem;
+    radial-gradient(ellipse 55% 40% at 74% 20%, rgba(255, 180, 77, 0.13), transparent 70%),
+    linear-gradient(180deg, #0E1330 0%, var(--night) 55%, #1A2148 100%);
+  padding: 6.5rem 0 0;
 }
-.hero .wrap { position: relative; max-width: 900px; }
+.hero .wrap { position: relative; max-width: 960px; z-index: 2; }
 .hero-eyebrow {
   font-family: var(--trail); font-size: 0.8rem; letter-spacing: 0.22em;
   text-transform: uppercase; color: var(--lamplight); margin-bottom: 1.4rem;
 }
 .hero h1 {
   font-family: var(--display);
-  font-size: clamp(2.4rem, 6vw, 4.2rem);
-  font-weight: 500; line-height: 1.12; letter-spacing: -0.01em;
+  font-size: clamp(2.4rem, 6vw, 4.4rem);
+  font-weight: 500; line-height: 1.1; letter-spacing: -0.01em;
   max-width: 15ch;
 }
 .hero h1 em { font-style: italic; color: var(--lamplight); }
@@ -122,27 +145,60 @@ textarea:focus-visible {
 }
 .hero-ctas { margin-top: 2.4rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
 
+/* Night landscape at the foot of the hero: hills + winding path + horizon lantern */
+.hero-scene { position: relative; z-index: 1; margin-top: 2.5rem; }
+.hero-scene svg { width: 100%; height: auto; display: block; }
+
 .btn {
   display: inline-block; font-family: var(--body); font-weight: 700;
   font-size: 1rem; letter-spacing: 0.02em; cursor: pointer;
   border-radius: 999px; padding: 0.85rem 1.8rem; border: 1px solid transparent;
-  transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+  transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease, box-shadow 0.2s ease;
 }
 .btn:hover { transform: translateY(-1px); }
-.btn-primary { background: var(--lamplight); color: var(--night); }
-.btn-primary:hover { background: var(--ember); color: var(--cream); }
+.btn-primary {
+  background: var(--lamplight); color: var(--night);
+  box-shadow: 0 0 0 rgba(255, 180, 77, 0);
+}
+.btn-primary:hover {
+  background: var(--ember); color: var(--cream);
+  box-shadow: 0 4px 24px rgba(255, 180, 77, 0.35);
+}
 .btn-ghost { border-color: rgba(246, 239, 227, 0.35); color: var(--cream); }
 .btn-ghost:hover { border-color: var(--lamplight); color: var(--lamplight); }
 
-/* Star field — tiny fixed dots in the hero sky */
-.hero-stars { position: absolute; inset: 0; pointer-events: none; opacity: 0.7; }
+/* Stars */
+.hero-stars { position: absolute; inset: 0; pointer-events: none; opacity: 0.7; z-index: 0; }
+.hero-stars circle { animation: twinkle 4s ease-in-out infinite; }
+.hero-stars circle:nth-child(2n) { animation-delay: 1.3s; animation-duration: 5.2s; }
+.hero-stars circle:nth-child(3n) { animation-delay: 2.6s; animation-duration: 6.1s; }
+@keyframes twinkle {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.9; }
+}
+
+/* Fireflies — small drifting embers in the dark sections */
+.firefly {
+  position: absolute; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--lamplight); filter: blur(1px);
+  box-shadow: 0 0 10px 2px rgba(255, 180, 77, 0.6);
+  opacity: 0; pointer-events: none; z-index: 1;
+  animation: drift 11s ease-in-out infinite;
+}
+.firefly:nth-child(2n) { animation-duration: 14s; animation-delay: 3s; }
+.firefly:nth-child(3n) { animation-duration: 17s; animation-delay: 6s; width: 4px; height: 4px; }
+@keyframes drift {
+  0%   { transform: translate(0, 0); opacity: 0; }
+  10%  { opacity: 0.9; }
+  45%  { transform: translate(38px, -46px); opacity: 0.35; }
+  70%  { transform: translate(-22px, -84px); opacity: 0.8; }
+  100% { transform: translate(12px, -130px); opacity: 0; }
+}
 
 /* ---------- Waypoint sections ---------- */
 
-.waypoint { padding: 5.5rem 0; }
-.waypoint .wrap { position: relative; }
+.waypoint { padding: 5rem 0 4rem; position: relative; }
 
-/* The trail rail: dashed line + glowing dot beside each section on wide screens */
 .wp-marker {
   font-family: var(--trail); font-size: 0.78rem; letter-spacing: 0.22em;
   text-transform: uppercase; display: flex; align-items: center; gap: 0.7rem;
@@ -161,7 +217,7 @@ textarea:focus-visible {
 .sec-h {
   font-family: var(--display); font-weight: 500;
   font-size: clamp(1.7rem, 3.6vw, 2.5rem); line-height: 1.2;
-  max-width: 22ch; margin-bottom: 1.4rem;
+  max-width: 24ch; margin-bottom: 1.4rem;
 }
 .sec-h em { font-style: italic; }
 .prose { max-width: 62ch; }
@@ -181,16 +237,21 @@ textarea:focus-visible {
 .stage-peach .wp-marker, .stage-dawn .wp-marker { color: var(--ember); }
 .stage-dusk .wp-marker, .stage-mauve .wp-marker, .stage-rose .wp-marker { color: var(--lamplight); }
 
-/* Soft dawn transition seams between stages */
-.seam { height: 5px; background: linear-gradient(90deg, transparent, rgba(255, 180, 77, 0.35), transparent); }
+/* Curved "hill" seams joining the stages — each carries the NEXT
+   section's color so blocks flow into each other like landscape */
+.curve { display: block; width: 100%; height: 64px; margin-bottom: -1px; }
+.curve svg { width: 100%; height: 100%; display: block; }
+.curve.flip svg { transform: scaleX(-1); }
 
 /* ---------- The work (steps) ---------- */
 
 .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; margin-top: 2.2rem; }
 .step {
-  border: 1px solid rgba(246, 239, 227, 0.16); border-radius: 14px;
+  border: 1px solid rgba(246, 239, 227, 0.16); border-radius: 16px;
   padding: 1.6rem 1.4rem; background: rgba(20, 26, 56, 0.25);
+  transition: transform 0.2s ease, border-color 0.2s ease;
 }
+.step:hover { transform: translateY(-4px); border-color: rgba(255, 180, 77, 0.5); }
 .step-n {
   font-family: var(--trail); font-size: 0.78rem; letter-spacing: 0.2em;
   color: var(--lamplight); margin-bottom: 0.8rem;
@@ -200,18 +261,28 @@ textarea:focus-visible {
 
 /* ---------- Testimonials ---------- */
 
-.tgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.2rem; margin-top: 2.2rem; }
+.tgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.4rem; margin-top: 2.2rem; }
 .tcard {
-  border: 1px solid rgba(246, 239, 227, 0.18); border-radius: 14px;
-  padding: 1.6rem 1.5rem; background: rgba(20, 26, 56, 0.22);
+  position: relative;
+  border: 1px solid rgba(246, 239, 227, 0.18); border-radius: 16px;
+  padding: 2rem 1.6rem 1.6rem; background: rgba(20, 26, 56, 0.22);
   display: flex; flex-direction: column; gap: 1rem;
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+/* hand-placed feel: cards sit slightly off-axis, straighten on hover */
+.tcard:nth-child(odd)  { transform: rotate(-0.7deg); }
+.tcard:nth-child(even) { transform: rotate(0.6deg) translateY(6px); }
+.tcard:hover { transform: rotate(0deg) translateY(-2px); border-color: rgba(255, 180, 77, 0.5); }
+.tcard::before {
+  content: "\201C";
+  position: absolute; top: -0.35em; left: 0.35em;
+  font-family: var(--display); font-style: italic;
+  font-size: 4.5rem; line-height: 1; color: var(--lamplight); opacity: 0.5;
 }
 .tcard blockquote {
   font-family: var(--display); font-style: italic; font-weight: 400;
-  font-size: 1.12rem; line-height: 1.5;
+  font-size: 1.12rem; line-height: 1.5; padding-top: 0.4rem;
 }
-.tcard blockquote::before { content: "\201C"; color: var(--lamplight); }
-.tcard blockquote::after { content: "\201D"; color: var(--lamplight); }
 .t-who { display: flex; align-items: center; gap: 0.75rem; margin-top: auto; }
 .t-avatar {
   width: 40px; height: 40px; border-radius: 50%; flex: none;
@@ -224,15 +295,18 @@ textarea:focus-visible {
 
 /* ---------- Socials ---------- */
 
-.socials { display: flex; gap: 0.9rem; align-items: center; flex-wrap: wrap; margin-top: 2.4rem; }
+.socials { display: flex; gap: 0.9rem; align-items: center; flex-wrap: wrap; margin-top: 2.6rem; }
 .socials-label { font-family: var(--trail); font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase; margin-right: 0.4rem; }
 .soc {
   width: 42px; height: 42px; border-radius: 50%;
   display: grid; place-items: center;
   border: 1px solid rgba(246, 239, 227, 0.3); color: var(--cream);
-  transition: border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  transition: border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.2s ease;
 }
-.soc:hover { border-color: var(--lamplight); color: var(--lamplight); transform: translateY(-2px); }
+.soc:hover {
+  border-color: var(--lamplight); color: var(--lamplight);
+  transform: translateY(-3px); box-shadow: 0 4px 18px rgba(255, 180, 77, 0.25);
+}
 .soc svg { width: 19px; height: 19px; fill: currentColor; }
 .stage-dawn .soc { border-color: rgba(43, 33, 56, 0.3); color: var(--ink); }
 .stage-dawn .soc:hover { border-color: var(--ember); color: var(--ember); }
@@ -242,11 +316,14 @@ textarea:focus-visible {
 .bgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; margin-top: 2.2rem; }
 .bcard {
   display: flex; flex-direction: column; gap: 0.6rem;
-  border: 1px solid rgba(43, 33, 56, 0.18); border-radius: 14px;
+  border: 1px solid rgba(43, 33, 56, 0.18); border-radius: 16px;
   background: rgba(255, 255, 255, 0.45); padding: 1.5rem 1.4rem;
-  color: var(--ink); transition: transform 0.15s ease, border-color 0.15s ease;
+  color: var(--ink); transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
-.bcard:hover { transform: translateY(-3px); border-color: var(--ember); color: var(--ink); }
+.bcard:hover {
+  transform: translateY(-4px); border-color: var(--ember); color: var(--ink);
+  box-shadow: 0 10px 30px rgba(43, 33, 56, 0.12);
+}
 .b-date { font-family: var(--trail); font-size: 0.75rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ember); }
 .bcard h3 { font-family: var(--display); font-weight: 500; font-size: 1.22rem; line-height: 1.3; }
 .bcard p { font-size: 0.95rem; color: var(--ink-dim); }
@@ -264,8 +341,11 @@ textarea:focus-visible {
   background: rgba(255, 255, 255, 0.75);
   border: 1px solid rgba(43, 33, 56, 0.25); border-radius: 10px;
   padding: 0.7rem 0.9rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
-.field input:focus, .field textarea:focus { border-color: var(--ember); }
+.field input:focus, .field textarea:focus {
+  border-color: var(--ember); box-shadow: 0 0 0 3px rgba(226, 112, 58, 0.15);
+}
 .req { color: var(--ember); }
 .opt { font-weight: 400; color: var(--ink-dim); }
 .cform-honey { display: none; }
@@ -273,7 +353,7 @@ textarea:focus-visible {
 
 .contact-card {
   margin-top: 2.4rem; max-width: 640px;
-  border: 1px solid rgba(43, 33, 56, 0.2); border-radius: 14px; overflow: hidden;
+  border: 1px solid rgba(43, 33, 56, 0.2); border-radius: 16px; overflow: hidden;
 }
 .cc-head {
   display: flex; justify-content: space-between;
@@ -295,7 +375,7 @@ footer { background: var(--dawn); color: var(--ink); padding: 2.5rem 0 3rem; bor
 
 /* ---------- Blog article pages ---------- */
 
-.article-hero { background: var(--night); padding: 4.5rem 0 3.5rem; }
+.article-hero { background: linear-gradient(180deg, #0E1330, var(--night)); padding: 4.5rem 0 3.5rem; }
 .article-hero .wrap { max-width: 780px; }
 .article-hero h1 {
   font-family: var(--display); font-weight: 500;
@@ -309,7 +389,7 @@ footer { background: var(--dawn); color: var(--ink); padding: 2.5rem 0 3rem; bor
 .article-body ul, .article-body ol { margin: 0 0 1.1rem 1.4rem; color: var(--ink-dim); }
 .article-body li { margin-bottom: 0.5rem; }
 .article-cta {
-  margin-top: 3rem; border: 1px solid rgba(43, 33, 56, 0.2); border-radius: 14px;
+  margin-top: 3rem; border: 1px solid rgba(43, 33, 56, 0.2); border-radius: 16px;
   padding: 1.8rem 1.6rem; background: rgba(255, 255, 255, 0.5);
 }
 .article-cta p { color: var(--ink); font-family: var(--display); font-size: 1.15rem; margin-bottom: 1rem; }
@@ -326,7 +406,10 @@ footer { background: var(--dawn); color: var(--ink); padding: 2.5rem 0 3rem; bor
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .rise { opacity: 1; transform: none; transition: none; }
-  .btn, .soc, .bcard { transition: none; }
+  .btn, .soc, .bcard, .step, .tcard { transition: none; }
+  .hero-stars circle { animation: none; opacity: 0.6; }
+  .firefly { display: none; }
+  .tcard:nth-child(odd), .tcard:nth-child(even) { transform: none; }
 }
 
 /* ---------- Responsive ---------- */
@@ -334,8 +417,10 @@ footer { background: var(--dawn); color: var(--ink); padding: 2.5rem 0 3rem; bor
 @media (max-width: 860px) {
   .steps, .bgrid, .blog-index .bgrid { grid-template-columns: 1fr; }
   .tgrid { grid-template-columns: 1fr; }
+  .tcard:nth-child(odd), .tcard:nth-child(even) { transform: none; }
   .fgrid { grid-template-columns: 1fr; }
-  .hero { padding: 5rem 0 4rem; }
-  .waypoint { padding: 4rem 0; }
+  .hero { padding: 4.5rem 0 0; }
+  .waypoint { padding: 3.5rem 0 3rem; }
   .navlinks { gap: 1rem; font-size: 0.9rem; }
+  .curve { height: 36px; }
 }

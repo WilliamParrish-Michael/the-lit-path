@@ -26,8 +26,10 @@ submissions flow normally.
 
 ## ⚠️ TODO before promoting the site
 
-1. **Logo** — an interim SVG flame mark is used in the top bar (`.brand-flame` in
-   every page) and `favicon.svg`. Swap both when the real logo is designed.
+1. **Logo** — a custom mark now ships with the site: a dotted footstep trail
+   winding up into a flame (inline `.brand-flame` SVG on every page,
+   `favicon.svg`, and a standalone lockup in `logo.svg` for social profiles).
+   If the client later supplies their own logo, swap those three spots.
 2. **Accreditations** — a commented-out credentials block sits in `index.html`
    under `<!-- ACCREDITATIONS -->`. Fill it in when the client's certifications
    arrive.
