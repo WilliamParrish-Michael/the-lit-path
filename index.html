@@ -373,17 +373,17 @@
         trailPath.setAttribute('d', d);
         trailPath.setAttribute('fill', 'none');
         trailPath.setAttribute('stroke', '#FFB44D');
-        trailPath.setAttribute('stroke-opacity', '0.4');
-        trailPath.setAttribute('stroke-width', '3');
+        trailPath.setAttribute('stroke-opacity', '0.6');
+        trailPath.setAttribute('stroke-width', '4');
         trailPath.setAttribute('stroke-linecap', 'round');
         trailPath.setAttribute('stroke-dasharray', '0.1 16');
         svg.appendChild(trailPath);
 
         var glow = document.createElementNS(NS, 'circle');
-        glow.setAttribute('r', '22');
+        glow.setAttribute('r', '34');
         glow.setAttribute('fill', 'url(#trail-glow)');
         var core = document.createElementNS(NS, 'circle');
-        core.setAttribute('r', '4');
+        core.setAttribute('r', '5.5');
         core.setAttribute('fill', '#FFD9A0');
         lantern = document.createElementNS(NS, 'g');
         lantern.appendChild(glow);
