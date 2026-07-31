@@ -663,35 +663,61 @@
 
       if (hasST) {
       /* Section content reveals (decorative — safe to lose) */
-      gsap.utils.toArray('.sec-h, .step, .share-card, .cform, .contact-card').forEach(function (el) {
+      gsap.utils.toArray('.sec-h, .share-card, .cform, .contact-card').forEach(function (el) {
         gsap.from(el, {
           y: 36, opacity: 0, duration: 0.9, ease: 'power3.out',
           scrollTrigger: { trigger: el, start: 'top 88%' }
         });
       });
 
-      /* Hero scene parallax */
-      gsap.to('.hero-scene', {
-        yPercent: 14, ease: 'none',
-        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
-      });
+      /* Scroll story 1 — the hero pins while the night deepens: the
+         headline drifts up and away, the landscape rises, stars dim.
+         You scroll "into" the scene instead of past it. */
+      if (window.innerHeight > 540) {
+        gsap.timeline({
+          scrollTrigger: { trigger: '.hero', start: 'top top', end: '+=110%', pin: true, scrub: 0.6 }
+        })
+        .to('.hero .wrap', { yPercent: -26, autoAlpha: 0, ease: 'none' }, 0)
+        .to('.hero-scene', { yPercent: -12, scale: 1.05, ease: 'none' }, 0)
+        .to('.hero-stars', { opacity: 0.25, ease: 'none' }, 0);
+      }
 
-      /* Marquee skews with scroll velocity */
+      /* Scroll story 2 — "The work" pins while the three steps take
+         the stage one at a time, driven by your scroll. */
+      var steps = gsap.utils.toArray('#work .step');
+      if (steps.length === 3 && window.innerHeight > 600) {
+        gsap.set(steps.slice(1), { autoAlpha: 0, y: 70 });
+        gsap.timeline({
+          scrollTrigger: { trigger: '#work', start: 'top 10%', end: '+=150%', pin: true, scrub: 0.5 }
+        })
+        .to(steps[1], { autoAlpha: 1, y: 0, ease: 'none' }, 0.15)
+        .to(steps[2], { autoAlpha: 1, y: 0, ease: 'none' }, 0.55);
+      } else if (steps.length) {
+        steps.forEach(function (el) {
+          gsap.from(el, { y: 36, opacity: 0, duration: 0.9, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 88%' } });
+        });
+      }
+
+      /* Marquee rides your scroll: direction and speed follow it,
+         with a velocity skew on fast flicks. */
       var mq = document.querySelector('.marquee');
-      if (mq) {
+      var track = document.querySelector('.marquee-track');
+      if (mq && track) {
+        track.style.animation = 'none';
+        var mqTween = gsap.to(track, { xPercent: -50, ease: 'none', duration: 26, repeat: -1 });
         var clampSkew = gsap.utils.clamp(-7, 7);
-        var proxy = { skew: 0 };
         ScrollTrigger.create({
           onUpdate: function (self) {
-            var skew = clampSkew(self.getVelocity() / -280);
-            if (Math.abs(skew) > Math.abs(proxy.skew)) {
-              proxy.skew = skew;
-              gsap.to(proxy, {
-                skew: 0, duration: 0.7, ease: 'power3', overwrite: true,
-                onUpdate: function () { mq.style.transform = 'skewX(' + proxy.skew + 'deg)'; }
-              });
-            }
+            var v = self.getVelocity();
+            mqTween.timeScale(gsap.utils.clamp(-4, 4, (self.direction || 1) * (1 + Math.abs(v) / 900)));
+            mq.style.transform = 'skewX(' + clampSkew(v / -280) + 'deg)';
           }
+        });
+        gsap.ticker.add(function () {
+          var ts = mqTween.timeScale();
+          mqTween.timeScale(ts + ((ts < 0 ? -1 : 1) - ts) * 0.04);
+          var m = /skewX\((-?[\d.]+)deg\)/.exec(mq.style.transform);
+          if (m) mq.style.transform = 'skewX(' + (parseFloat(m[1]) * 0.92) + 'deg)';
         });
       }
       }
