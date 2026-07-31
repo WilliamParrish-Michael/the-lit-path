@@ -163,42 +163,11 @@
       <div class="wrap">
         <p class="wp-marker"><span class="wp-dot"></span>Waypoint 03 · Voices from the path</p>
         <h2 class="sec-h">What clients say <em>after</em> the turning point.</h2>
-        <!-- ============================================================
-             SAMPLE TESTIMONIALS — placeholder content written by the site
-             builder. Replace each card below with a real client review
-             (with the client's written permission) before promoting the
-             site. Keep the same markup: blockquote + .t-who block.
-             ============================================================ -->
-        <div class="tgrid">
-          <article class="tcard">
-            <blockquote>I came in wanting a new job and left with a new direction. Robbert asks the questions you've been avoiding — kindly, but he asks them.</blockquote>
-            <div class="t-who">
-              <span class="t-avatar" aria-hidden="true">D</span>
-              <div><p class="t-name">Danielle M.</p><p class="t-note">Career change · 6 months of coaching</p></div>
-            </div>
-          </article>
-          <article class="tcard">
-            <blockquote>The accountability between sessions is what changed things for me. For the first time, my goals survived contact with a busy week.</blockquote>
-            <div class="t-who">
-              <span class="t-avatar" aria-hidden="true">J</span>
-              <div><p class="t-name">James R.</p><p class="t-note">Small business owner</p></div>
-            </div>
-          </article>
-          <article class="tcard">
-            <blockquote>I expected a pep talk. What I got was a plan, a mirror, and someone who genuinely would not let me quit on myself.</blockquote>
-            <div class="t-who">
-              <span class="t-avatar" aria-hidden="true">A</span>
-              <div><p class="t-name">Alicia T.</p><p class="t-note">Returning to school at 38</p></div>
-            </div>
-          </article>
-          <article class="tcard">
-            <blockquote>Worth every session. I stopped circling the same decision for two years and finally made it — and it was the right one.</blockquote>
-            <div class="t-who">
-              <span class="t-avatar" aria-hidden="true">M</span>
-              <div><p class="t-name">Marcus B.</p><p class="t-note">Relocation &amp; fresh start</p></div>
-            </div>
-          </article>
-        </div>
+        <!-- Testimonials render from testimonials.js — edit THAT file to
+             add/hide reviews. Filter buttons appear automatically when
+             reviews come from more than one source (Google, Yelp, …). -->
+        <div class="tfilter" id="tfilter" role="group" aria-label="Filter testimonials by source" hidden></div>
+        <div class="tgrid" id="tgrid"></div>
 
         <div class="socials">
           <span class="socials-label">Follow the path</span>
@@ -215,7 +184,16 @@
           <a class="soc" href="#" aria-label="The Lit Path on YouTube (link coming soon)">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12c0 1.6.1 3.2.4 4.8a2.5 2.5 0 0 0 1.8 1.8c1.6.4 7.8.4 7.8.4s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8c.3-1.6.4-3.2.4-4.8s-.1-3.2-.4-4.8zM10 15.2V8.8l5.4 3.2-5.4 3.2z"/></svg>
           </a>
+          <a class="soc" href="#" aria-label="The Lit Path on Google (link coming soon)">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.35 11.1H12v3.9h5.4c-.55 2.4-2.6 3.9-5.4 3.9a6 6 0 1 1 0-12c1.5 0 2.9.55 3.95 1.45l2.85-2.85A9.6 9.6 0 0 0 12 2.4a9.6 9.6 0 1 0 0 19.2c5.5 0 9.4-3.9 9.4-9.4 0-.37-.02-.74-.05-1.1z"/></svg>
+          </a>
+          <a class="soc" href="#" aria-label="The Lit Path on Yelp (link coming soon)">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l1.9 5.9 6.2.1-5 3.6 1.9 5.9L12 13.8l-5 3.7 1.9-5.9-5-3.6 6.2-.1z"/></svg>
+          </a>
         </div>
+        <!-- TODO: replace "#" with the client's Google Business Profile review
+             link and Yelp business page when provided -->
+        <p class="review-cta">Worked with us? A short review on <a href="#">Google</a> or <a href="#">Yelp</a> helps the next person find the path.</p>
       </div>
     </section>
 
@@ -303,8 +281,72 @@
     </div>
   </footer>
 
+  <script src="testimonials.js"></script>
   <script>
     document.getElementById('yr').textContent = new Date().getFullYear();
+
+    /* Testimonials: render cards from testimonials.js, with source badges
+       and (when reviews come from more than one source) filter buttons. */
+    (function () {
+      var grid = document.getElementById('tgrid');
+      if (!grid || typeof TESTIMONIALS === 'undefined') return;
+      var LABELS = { google: 'Google', yelp: 'Yelp', instagram: 'Instagram', facebook: 'Facebook', direct: 'Client note' };
+      var ICONS = {
+        google: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.35 11.1H12v3.9h5.4c-.55 2.4-2.6 3.9-5.4 3.9a6 6 0 1 1 0-12c1.5 0 2.9.55 3.95 1.45l2.85-2.85A9.6 9.6 0 0 0 12 2.4a9.6 9.6 0 1 0 0 19.2c5.5 0 9.4-3.9 9.4-9.4 0-.37-.02-.74-.05-1.1z"/></svg>',
+        yelp: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2l1.9 5.9 6.2.1-5 3.6 1.9 5.9L12 13.8l-5 3.7 1.9-5.9-5-3.6 6.2-.1z"/></svg>'
+      };
+      var shown = TESTIMONIALS.filter(function (t) { return t.show; });
+      var current = 'all';
+
+      function card(t) {
+        var art = document.createElement('article'); art.className = 'tcard';
+        var q = document.createElement('blockquote'); q.textContent = t.quote;
+        art.appendChild(q);
+        var who = document.createElement('div'); who.className = 't-who';
+        var av = document.createElement('span'); av.className = 't-avatar';
+        av.setAttribute('aria-hidden', 'true'); av.textContent = (t.name || '?').charAt(0);
+        var meta = document.createElement('div');
+        var n = document.createElement('p'); n.className = 't-name'; n.textContent = t.name;
+        meta.appendChild(n);
+        if (t.note) { var note = document.createElement('p'); note.className = 't-note'; note.textContent = t.note; meta.appendChild(note); }
+        who.appendChild(av); who.appendChild(meta);
+        if (t.source && LABELS[t.source]) {
+          var src = document.createElement('span'); src.className = 't-src';
+          if (ICONS[t.source]) src.innerHTML = ICONS[t.source];
+          var word = document.createElement('span'); word.textContent = LABELS[t.source];
+          src.appendChild(word);
+          who.appendChild(src);
+        }
+        art.appendChild(who);
+        return art;
+      }
+
+      function render() {
+        grid.innerHTML = '';
+        shown.filter(function (t) { return current === 'all' || t.source === current; })
+             .forEach(function (t) { grid.appendChild(card(t)); });
+      }
+
+      var bar = document.getElementById('tfilter');
+      var sources = [];
+      shown.forEach(function (t) { if (t.source && sources.indexOf(t.source) < 0) sources.push(t.source); });
+      if (bar && sources.length > 1) {
+        bar.hidden = false;
+        ['all'].concat(sources).forEach(function (s) {
+          var b = document.createElement('button'); b.type = 'button';
+          b.className = 'tchip' + (s === 'all' ? ' active' : '');
+          b.textContent = s === 'all' ? 'All' : (LABELS[s] || s);
+          b.addEventListener('click', function () {
+            current = s;
+            bar.querySelectorAll('.tchip').forEach(function (x) { x.classList.remove('active'); });
+            b.classList.add('active');
+            render();
+          });
+          bar.appendChild(b);
+        });
+      }
+      render();
+    })();
     (function () {
       var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       var risers = document.querySelectorAll('.rise');

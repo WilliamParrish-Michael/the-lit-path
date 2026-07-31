@@ -293,6 +293,28 @@ main { position: relative; }
 .t-name { font-weight: 700; font-size: 0.98rem; }
 .t-note { font-size: 0.85rem; color: var(--cream-dim); }
 
+/* Testimonial filter chips (appear when reviews span multiple sources) */
+.tfilter { display: flex; gap: 0.6rem; margin-top: 1.8rem; flex-wrap: wrap; }
+.tchip {
+  font-family: var(--trail); font-size: 0.75rem; letter-spacing: 0.14em;
+  text-transform: uppercase; padding: 0.45rem 1.05rem; border-radius: 999px;
+  border: 1px solid rgba(246, 239, 227, 0.3); background: transparent;
+  color: var(--cream-dim); cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+.tchip:hover { border-color: var(--lamplight); color: var(--lamplight); }
+.tchip.active { background: var(--lamplight); border-color: var(--lamplight); color: var(--night); }
+
+/* Source badge on a testimonial card (Google, Yelp, …) */
+.t-src {
+  margin-left: auto; display: flex; align-items: center; gap: 0.35rem;
+  font-family: var(--trail); font-size: 0.7rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--cream-dim);
+}
+.t-src svg { width: 14px; height: 14px; }
+
+.review-cta { margin-top: 1.1rem; font-size: 0.95rem; color: var(--cream-dim); max-width: 52ch; }
+
 /* ---------- Socials ---------- */
 
 .socials { display: flex; gap: 0.9rem; align-items: center; flex-wrap: wrap; margin-top: 2.6rem; }
