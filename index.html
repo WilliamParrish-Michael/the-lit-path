@@ -673,7 +673,7 @@
       /* Scroll story 1 — the hero pins while the night deepens: the
          headline drifts up and away, the landscape rises, stars dim.
          You scroll "into" the scene instead of past it. */
-      if (window.innerHeight > 540) {
+      {
         gsap.timeline({
           scrollTrigger: { trigger: '.hero', start: 'top top', end: '+=110%', pin: true, scrub: 0.6 }
         })
@@ -685,7 +685,7 @@
       /* Scroll story 2 — "The work" pins while the three steps take
          the stage one at a time, driven by your scroll. */
       var steps = gsap.utils.toArray('#work .step');
-      if (steps.length === 3 && window.innerHeight > 600) {
+      if (steps.length === 3) {
         gsap.set(steps.slice(1), { autoAlpha: 0, y: 70 });
         gsap.timeline({
           scrollTrigger: { trigger: '#work', start: 'top 10%', end: '+=150%', pin: true, scrub: 0.5 }
@@ -749,7 +749,7 @@
           });
         });
       }
-      } catch (e) { /* decorative layer failed — content unaffected */ }
+      } catch (e) { window.__animErr = e; if (window.console && console.error) console.error('anim layer:', e); }
     })();
   </script>
 </body>
