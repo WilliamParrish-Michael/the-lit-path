@@ -79,12 +79,9 @@
         <circle cx="52%" cy="55%" r="0.9" fill="#F6EFE3"/>
         <circle cx="73%" cy="26%" r="0.8" fill="#F6EFE3"/>
       </svg>
-      <span class="firefly" style="left:12%; top:58%;"></span>
-      <span class="firefly" style="left:28%; top:70%;"></span>
-      <span class="firefly" style="left:55%; top:62%;"></span>
-      <span class="firefly" style="left:72%; top:74%;"></span>
-      <span class="firefly" style="left:86%; top:56%;"></span>
-      <span class="firefly" style="left:40%; top:78%;"></span>
+      <span class="firefly" style="left:22%; top:64%;"></span>
+      <span class="firefly" style="left:62%; top:70%;"></span>
+      <span class="firefly" style="left:84%; top:58%;"></span>
       <div class="wrap">
         <p class="hero-eyebrow rise">The Lit Path · Life coaching</p>
         <h1 class="hero-mega" aria-label="No one walks the path alone.">
@@ -133,8 +130,6 @@
     <div class="curve" style="background: #10142E;" aria-hidden="true"><svg viewBox="0 0 1440 64" preserveAspectRatio="none"><path d="M0 34 C 240 62, 480 6, 720 30 C 960 54, 1200 14, 1440 34 L1440 64 L0 64 Z" fill="#232A52"/></svg></div>
 
     <section id="about" class="waypoint stage-dusk">
-      <span class="firefly" style="left:82%; top:30%;"></span>
-      <span class="firefly" style="left:90%; top:65%;"></span>
       <div class="wrap">
         <p class="wp-marker"><span class="wp-dot"></span>Waypoint 01 · Where you are</p>
         <h2 class="sec-h">Stuck isn't a character flaw. It's a <em>starting point.</em></h2>
@@ -154,8 +149,6 @@
     <div class="curve flip" style="background: var(--dusk);" aria-hidden="true"><svg viewBox="0 0 1440 64" preserveAspectRatio="none"><path d="M0 34 C 240 62, 480 6, 720 30 C 960 54, 1200 14, 1440 34 L1440 64 L0 64 Z" fill="#453460"/></svg></div>
 
     <section id="work" class="waypoint stage-mauve">
-      <span class="firefly" style="left:6%; top:55%;"></span>
-      <span class="firefly" style="left:88%; top:25%;"></span>
       <div class="wrap">
         <p class="wp-marker"><span class="wp-dot"></span>Waypoint 02 · The work</p>
         <h2 class="sec-h">Three steps onto the path.</h2>
@@ -182,8 +175,6 @@
     <div class="curve" style="background: var(--mauve);" aria-hidden="true"><svg viewBox="0 0 1440 64" preserveAspectRatio="none"><path d="M0 34 C 240 62, 480 6, 720 30 C 960 54, 1200 14, 1440 34 L1440 64 L0 64 Z" fill="#6E4160"/></svg></div>
 
     <section id="voices" class="waypoint stage-rose">
-      <span class="firefly" style="left:8%; top:20%;"></span>
-      <span class="firefly" style="left:92%; top:50%;"></span>
       <div class="wrap">
         <p class="wp-marker"><span class="wp-dot"></span>Waypoint 03 · Voices from the path</p>
         <h2 class="sec-h">What clients say <em>after</em> the turning point.</h2>
@@ -665,7 +656,7 @@
       /* Section content reveals (decorative — safe to lose) */
       gsap.utils.toArray('.sec-h, .share-card, .cform, .contact-card').forEach(function (el) {
         gsap.from(el, {
-          y: 36, opacity: 0, duration: 0.9, ease: 'power3.out',
+          y: 24, opacity: 0, duration: 0.7, ease: 'power3.out',
           scrollTrigger: { trigger: el, start: 'top 88%' }
         });
       });
@@ -675,7 +666,7 @@
          You scroll "into" the scene instead of past it. */
       {
         gsap.timeline({
-          scrollTrigger: { trigger: '.hero', start: 'top top', end: '+=110%', pin: true, scrub: 0.6 }
+          scrollTrigger: { trigger: '.hero', start: 'top top', end: '+=85%', pin: true, scrub: 0.6 }
         })
         .to('.hero .wrap', { yPercent: -26, autoAlpha: 0, ease: 'none' }, 0)
         .to('.hero-scene', { yPercent: -12, scale: 1.05, ease: 'none' }, 0)
@@ -688,13 +679,13 @@
       if (steps.length === 3) {
         gsap.set(steps.slice(1), { autoAlpha: 0, y: 70 });
         gsap.timeline({
-          scrollTrigger: { trigger: '#work', start: 'top 10%', end: '+=150%', pin: true, scrub: 0.5 }
+          scrollTrigger: { trigger: '#work', start: 'top 10%', end: '+=125%', pin: true, scrub: 0.5 }
         })
         .to(steps[1], { autoAlpha: 1, y: 0, ease: 'none' }, 0.15)
         .to(steps[2], { autoAlpha: 1, y: 0, ease: 'none' }, 0.55);
       } else if (steps.length) {
         steps.forEach(function (el) {
-          gsap.from(el, { y: 36, opacity: 0, duration: 0.9, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 88%' } });
+          gsap.from(el, { y: 24, opacity: 0, duration: 0.7, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 88%' } });
         });
       }
 
