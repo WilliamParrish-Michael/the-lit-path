@@ -3,7 +3,7 @@
    LITPATH_API: base URL of the testimonials/blog API (Render).
    If the Render service gets a different name, update this one
    line and everything (home page, blog, post page, admin) follows.
-   STATIC_POSTS: the three hand-built launch posts, so live posts
+   STATIC_POSTS: the three hand-built posts, so live posts
    from the API and static posts merge into one ordered list.
    ============================================================ */
 
@@ -11,22 +11,22 @@ const LITPATH_API = 'https://the-lit-path-api.onrender.com';
 
 const STATIC_POSTS = [
   {
-    url: 'blog/what-a-life-coach-actually-does.html',
-    title: "What a life coach actually does (and doesn't do)",
-    description: "It isn't therapy, it isn't advice, and it definitely isn't a pep talk. Here's what the work really looks like.",
-    published_at: '2026-07-31T00:00:00Z'
+    url: 'blog/what-happens-at-an-intervention.html',
+    title: 'What actually happens at an intervention',
+    description: 'It is not what television shows. How we prepare a family, what the conversation looks like, and what happens the moment someone says yes.',
+    published_at: '2026-10-19T00:00:00Z'
   },
   {
-    url: 'blog/five-signs-youre-ready-for-a-change.html',
-    title: "Five signs you're ready for a change — even if it doesn't feel like it",
-    description: 'Readiness rarely announces itself. More often it looks like restlessness, envy, or a decision you keep circling.',
-    published_at: '2026-07-30T00:00:00Z'
+    url: 'blog/when-your-loved-one-comes-home.html',
+    title: 'When your loved one comes home from treatment',
+    description: 'The first weeks home are often harder than the family expects. What to expect, what to watch for, and how to hold boundaries without pushing them away.',
+    published_at: '2026-10-18T00:00:00Z'
   },
   {
-    url: 'blog/goals-that-survive-february.html',
-    title: 'How to set goals that survive February',
-    description: "Most goals don't fail from lack of willpower. They fail at the design stage. Build them differently.",
-    published_at: '2026-07-29T00:00:00Z'
+    url: 'blog/what-a-sober-companion-does.html',
+    title: 'What a sober companion actually does',
+    description: 'The hours between saying yes and the facility door are the most dangerous. A sober companion exists for exactly those hours.',
+    published_at: '2026-10-17T00:00:00Z'
   }
 ];
 

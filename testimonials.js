@@ -10,7 +10,7 @@
                          first name + last initial unless the
                          client has written permission for more.
      note    (optional)  Small line under the name, e.g.
-                         "Career change · 6 months of coaching".
+                         "Parent" or "In recovery".
      source  (required)  Where the review came from. One of:
                          "google" | "yelp" | "instagram" |
                          "facebook" | "direct"
@@ -29,36 +29,14 @@
    ============================================================ */
 
 const TESTIMONIALS = [
+  /* Example — copy, fill in, and set show: true once you have the
+     person's written permission:
   {
-    quote: "I came in wanting a new job and left with a new direction. Robbert asks the questions you've been avoiding — kindly, but he asks them.",
-    name: "Danielle M.",
-    note: "Career change · 6 months of coaching",
+    quote: "…",
+    name: "Maria L.",
+    note: "Parent",
     source: "direct",
-    show: true,
-    sample: true
+    show: true
   },
-  {
-    quote: "The accountability between sessions is what changed things for me. For the first time, my goals survived contact with a busy week.",
-    name: "James R.",
-    note: "Small business owner",
-    source: "direct",
-    show: true,
-    sample: true
-  },
-  {
-    quote: "I expected a pep talk. What I got was a plan, a mirror, and someone who genuinely would not let me quit on myself.",
-    name: "Alicia T.",
-    note: "Returning to school at 38",
-    source: "direct",
-    show: true,
-    sample: true
-  },
-  {
-    quote: "Worth every session. I stopped circling the same decision for two years and finally made it — and it was the right one.",
-    name: "Marcus B.",
-    note: "Relocation & fresh start",
-    source: "direct",
-    show: true,
-    sample: true
-  }
+  */
 ];

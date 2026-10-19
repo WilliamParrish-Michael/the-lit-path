@@ -1,6 +1,6 @@
-# The Lit Path — life coaching website
+# The Lit Path — interventions & sober companionship website
 
-Static marketing site for The Lit Path (life coaching practice of Robbert Ferd).
+Static marketing site for The Lit Path: family reunification interventions, treatment placement, sober companionship, and family support. Brand assets and the client's mission statement live in `brand/`; web-ready logo/photo files in `img/`.
 Same architecture as the Kathors Peptides site: plain HTML/CSS, no build step,
 FormSubmit contact form, hosted free on GitHub Pages.
 
@@ -10,11 +10,11 @@ FormSubmit contact form, hosted free on GitHub Pages.
 
 | File | Purpose |
 |---|---|
-| `index.html` | Home — hero, about, how it works, testimonials + socials, blog preview, contact form |
+| `index.html` | Home — hero, services, how it works, for families (incl. 988/911), about, stories + socials, blog preview, contact form |
 | `blog.html` | Blog index ("Field notes") |
-| `blog/*.html` | Individual posts (3 starter posts for SEO/marketing) |
+| `blog/*.html` | Individual posts (3 starter posts: interventions, coming home, sober companions) |
 | `thanks.html` | Post-submit landing page for the contact form |
-| `privacy.html`, `terms.html` | Legal pages (incl. coaching-is-not-therapy disclaimer) |
+| `privacy.html`, `terms.html` | Legal pages (incl. not-a-treatment-provider / no-guaranteed-outcome disclaimers) |
 | `sitemap.xml`, `robots.txt` | SEO |
 
 ## Contact form
@@ -91,27 +91,30 @@ automatically. Each entry has `quote`, `name`, `note`, `source`
 - **Source badge:** each card shows where the review came from.
 - **Visitor filtering:** when displayed reviews span more than one source,
   filter buttons (All / Google / Yelp / …) appear automatically above the grid.
-- Entries marked `sample: true` are placeholders — replace them before launch.
+- The array ships EMPTY. Real reviews only — this is an addiction-services
+  site, and placeholder testimonials would be a trust and compliance problem.
 
 ## ⚠️ TODO before promoting the site
 
-1. **Logo** — a custom mark now ships with the site: a dotted footstep trail
-   winding up into a flame (inline `.brand-flame` SVG on every page,
-   `favicon.svg`, and a standalone lockup in `logo.svg` for social profiles).
-   If the client later supplies their own logo, swap those three spots.
-2. **Accreditations** — a commented-out credentials block sits in `index.html`
-   under `<!-- ACCREDITATIONS -->`. Fill it in when the client's certifications
-   arrive.
-3. **Testimonials are SAMPLES** — the entries in `testimonials.js` are marked
-   `sample: true`. Replace with real client reviews (with written permission)
-   before launch.
-4. **Social & review links** — Instagram and Facebook are live. LinkedIn, YouTube,
-   Google, and Yelp icons point at `#` (marked `TODO` in `index.html`) — insert
-   the real profile URLs, the Google Business Profile review link, and the Yelp
-   business page when provided.
-5. **Verify the coach's name spelling** — "Robbert Ferd" was inferred from the
-   email address; confirm with the client.
-6. **Custom domain (optional)** — when the client buys a domain, add a `CNAME`
+1. **Accreditations / training** — a commented-out credentials block sits in
+   `index.html` under `<!-- ACCREDITATIONS -->`. The copy currently says
+   companions are "trained in overdose response"; name the actual training or
+   certification (CPR/First Aid, naloxone, CADC, intervention training) when the
+   client confirms it, and do not say "certified" until there is a certificate.
+2. **"Guarantee a place"** — the client's mission statement says they *guarantee*
+   placement. The site says "secure placement" / "work directly with the
+   facility". Confirm with the client before using the word guarantee anywhere.
+3. **Testimonials** — `testimonials.js` is empty on purpose. Add real reviews
+   (with written permission) or approve them through the admin portal.
+4. **Social & review links** — Instagram and Facebook are live. Google and Yelp
+   icons point at `#` (marked `TODO` in `index.html`) — insert the Google
+   Business Profile review link and the Yelp business page when provided.
+5. **Contact email** — the form still delivers to `Robbertferd@gmail.com`;
+   confirm this is the right inbox for the interventions business.
+6. **Hero photo** — `img/hero-family-*.jpg` is the stock image from the client's
+   handout. Alt text does not claim they are clients. Confirm the client holds a
+   license for web use.
+7. **Custom domain (optional)** — when the client buys a domain, add a `CNAME`
    file and update the absolute URLs in: OG tags, JSON-LD, `_next` form field,
    `robots.txt`, `sitemap.xml`.
 
